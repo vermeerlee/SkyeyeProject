@@ -1,6 +1,7 @@
 package com.xmh.skyeyedemo.activity;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.text.TextUtils;
@@ -60,6 +61,7 @@ public class LoginActivity extends BaseActivity {
         pd.setMessage(getString(R.string.Is_landing));
         pd.show();
         //endregion
+        //请求登录
         EMChatManager.getInstance().login(username, password, new EMCallBack() {
             @Override
             public void onSuccess() {
@@ -68,6 +70,8 @@ public class LoginActivity extends BaseActivity {
                     public void run() {
                         pd.dismiss();
                         Snackbar.make(getWindow().getDecorView(), R.string.login_success, Snackbar.LENGTH_SHORT).show();
+                        startActivity(new Intent(LoginActivity.this, ChoseActivity.class));
+                        LoginActivity.this.finish();
                     }
                 });
             }
@@ -89,4 +93,8 @@ public class LoginActivity extends BaseActivity {
         });
     }
 
+    @Override
+    public void onBackPressed() {
+        exitApp();
+    }
 }

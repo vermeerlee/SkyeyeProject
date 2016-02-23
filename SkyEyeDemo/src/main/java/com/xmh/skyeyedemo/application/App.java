@@ -1,4 +1,4 @@
-package com.xmh.skyeyedemo;
+package com.xmh.skyeyedemo.application;
 
 import android.app.Application;
 
@@ -21,4 +21,5 @@ public class App extends Application{
          */
         EMChat.getInstance().setDebugMode(true);//在做打包混淆时，要关闭debug模式，避免消耗不必要的资源
     }
+
 }
