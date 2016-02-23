@@ -1,1 +1,1 @@
-include ':DeskControl', ':SkyEye', ':SkyEyeDemo'
+include ':DeskControl', ':SkyEye', ':SkyEyeDemo', ':ChatDemoUI'

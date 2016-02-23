@@ -1,3 +1,13 @@
 <resources>
-    <string name="app_name">SkyEyeDemo</string>
+    <string name="app_name">※demo</string>
+    <string name="user_name">用户名</string>
+    <string name="password">密码</string>
+    <string name="register">注册</string>
+    <string name="login">登录</string>
+    <string name="network_isnot_available">网络连接异常</string>
+    <string name="User_name_cannot_be_empty">用户名不能为空</string>
+    <string name="Password_cannot_be_empty">密码不能为空</string>
+    <string name="Is_landing">正在登录</string>
+    <string name="login_success">登录成功</string>
+    <string name="login_fail">登录失败</string>
 </resources>
