@@ -25,7 +25,9 @@ public class LoginUtil {
                 //登录成功后需要调用
                 EMGroupManager.getInstance().loadAllGroups();
                 EMChatManager.getInstance().loadAllConversations();
-                callBack.onSuccess();
+                if(callBack!=null) {
+                    callBack.onSuccess();
+                }
             }
 
             @Override
@@ -37,19 +39,7 @@ public class LoginUtil {
                         public void run() {
                             try {
                                 EMChatManager.getInstance().createAccountOnServer(username,AppConfig.getPassword());//异步调用
-                                relogin(username, new EMCallBack() {
-                                    @Override
-                                    public void onSuccess() {
-                                    }
-
-                                    @Override
-                                    public void onError(int i, String s) {
-                                    }
-
-                                    @Override
-                                    public void onProgress(int i, String s) {
-                                    }
-                                });
+                                relogin(username, null);
                             } catch (EaseMobException e) {
                                 e.printStackTrace();
                                 //注册失败

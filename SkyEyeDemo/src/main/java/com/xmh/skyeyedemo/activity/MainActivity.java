@@ -25,6 +25,7 @@ public class MainActivity extends BaseActivity {
         LoginUtil.relogin(AppConfig.getUsername() + LoginUtil.USERNAME_HEADEND, new EMCallBack() {
             @Override
             public void onSuccess() {
+                Log.e("xmh-login","head");
                 initAfterLogin();
             }
 

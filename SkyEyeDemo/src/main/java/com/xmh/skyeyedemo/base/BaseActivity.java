@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
@@ -67,6 +68,7 @@ public class BaseActivity extends AppCompatActivity {
         @Override
         public void onConnected() {
             //已连接到服务器
+            Log.e("xmh-connected","connected");
         }
         @Override
         public void onDisconnected(final int error) {

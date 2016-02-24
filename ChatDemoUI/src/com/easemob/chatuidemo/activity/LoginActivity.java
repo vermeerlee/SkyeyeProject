@@ -209,8 +209,8 @@ public class LoginActivity extends BaseActivity {
 		String strChat = getResources().getString(
 				R.string.Application_and_notify);
 		newFriends.setNick(strChat);
-
 		userlist.put(Constant.NEW_FRIENDS_USERNAME, newFriends);
+
 		// 添加"群聊"
 		User groupUser = new User();
 		String strGroup = getResources().getString(R.string.group_chat);

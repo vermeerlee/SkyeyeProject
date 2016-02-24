@@ -27,23 +27,8 @@ public class WatchActivity extends BaseActivity {
         LoginUtil.relogin(AppConfig.getUsername() + LoginUtil.USERNAME_EYE_DEPART + CommonUtil.getUUID(this), new EMCallBack() {
             @Override
             public void onSuccess() {
-                //获取好友列表，如果没有username_head则添加
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        try {
-                            //获取好友列表
-                            List<String> usernames = EMContactManager.getInstance().getContactUserNames();//需异步执行
-                            if (usernames == null || usernames.isEmpty()) {
-                                Log.e("xmh-eye-contact", "request head");
-                                //添加head好友
-                                EMContactManager.getInstance().addContact(AppConfig.getUsername() + LoginUtil.USERNAME_HEADEND, AppConfig.getUsername());//需异步处理
-                            }
-                        } catch (EaseMobException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }).start();
+                Log.e("xmh-login","eye");
+                initAfterLogin();
             }
 
             @Override
@@ -56,6 +41,26 @@ public class WatchActivity extends BaseActivity {
                 //do nothing
             }
         });
+    }
+
+    private void initAfterLogin() {
+        //获取好友列表，如果没有username_head则添加
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    //获取好友列表
+                    List<String> usernames = EMContactManager.getInstance().getContactUserNames();//需异步执行
+                    if (usernames == null || usernames.isEmpty()) {
+                        //添加head好友
+                        EMContactManager.getInstance().addContact(AppConfig.getUsername() + LoginUtil.USERNAME_HEADEND, AppConfig.getUsername());//需异步处理
+                        Log.e("xmh-eye-contact", "request head");
+                    }
+                } catch (EaseMobException e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
     }
 
     @Override

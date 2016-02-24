@@ -2,7 +2,9 @@ package com.xmh.skyeyedemo.application;
 
 import android.app.ActivityManager;
 import android.app.Application;
+import android.content.IntentSender;
 import android.content.pm.PackageManager;
+import android.preference.PreferenceManager;
 import android.util.Log;
 
 import com.easemob.chat.EMChat;
@@ -74,4 +76,6 @@ public class App extends Application{
         }
         return processName;
     }
+
+
 }
