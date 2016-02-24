@@ -6,6 +6,7 @@ import android.support.design.widget.Snackbar;
 import android.view.View;
 
 import com.xmh.skyeyedemo.R;
+import com.xmh.skyeyedemo.application.AppConfig;
 import com.xmh.skyeyedemo.base.BaseActivity;
 
 import butterknife.ButterKnife;
@@ -23,6 +24,7 @@ public class ChoseActivity extends BaseActivity {
 
     @OnClick(R.id.btn_head)
     void onHeadClick(View view){
+        AppConfig.setUserMode(AppConfig.USER_MODE_HEAD);
         Snackbar.make(getWindow().getDecorView(),R.string.head_mode,Snackbar.LENGTH_SHORT).show();
         startActivity(new Intent(ChoseActivity.this, MainActivity.class));
         finish();
@@ -30,8 +32,10 @@ public class ChoseActivity extends BaseActivity {
 
     @OnClick(R.id.btn_eye)
     void onEyeClick(View eye){
+        AppConfig.setUserMode(AppConfig.USER_MODE_EYE);
         Snackbar.make(getWindow().getDecorView(),"TODOing",Snackbar.LENGTH_SHORT).show();
         startActivity(new Intent(ChoseActivity.this, WatchActivity.class));
+        finish();
     }
 
     @Override

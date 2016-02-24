@@ -31,3 +31,13 @@ cond_head(no)->cond_eye
 cond_eye(yes)->op_eye->e_success
 cond_eye(no)->e_fail
 ```
+
+##好友管理
+
+###head用户
+使用head重新登陆后，开始监听好友请求
+如果“第一个参数前缀、第二个参数reason、head用户名前缀”三者一致，则认为是该username的一个eye，同意该请求
+
+###eye用户
+使用eye登录成功后，获取好友列表，若好友列表为空，则请求添加head为好友
+另外不做好友状态监听

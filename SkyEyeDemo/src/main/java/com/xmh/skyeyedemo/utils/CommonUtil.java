@@ -13,7 +13,7 @@ import java.util.UUID;
 /**
  * Created by mengh on 2016/2/23 023.
  */
-public class CommonUtils {
+public class CommonUtil {
     private static String uniqueId=null;
 
     /**检查网络连接*/

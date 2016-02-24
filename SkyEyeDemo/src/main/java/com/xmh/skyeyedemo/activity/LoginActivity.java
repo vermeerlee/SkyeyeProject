@@ -13,8 +13,9 @@ import android.widget.Toast;
 import com.easemob.EMCallBack;
 import com.easemob.chat.EMChatManager;
 import com.xmh.skyeyedemo.R;
+import com.xmh.skyeyedemo.application.AppConfig;
 import com.xmh.skyeyedemo.base.BaseActivity;
-import com.xmh.skyeyedemo.utils.CommonUtils;
+import com.xmh.skyeyedemo.utils.CommonUtil;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -35,15 +36,15 @@ public class LoginActivity extends BaseActivity {
 
     @OnClick(R.id.btn_login)
     void onLoginClick(View view){
-        CommonUtils.closeInputMethod(this);
+        CommonUtil.closeInputMethod(this);
         //region 检查网络连接
-        if (!CommonUtils.isNetWorkConnected(this)) {
+        if (!CommonUtil.isNetWorkConnected(this)) {
             Toast.makeText(this, R.string.network_isnot_available, Toast.LENGTH_SHORT).show();
             return;
         }
         //endregion
-        String username = etUsername.getText().toString();
-        String password = etPassword.getText().toString();
+        final String username = etUsername.getText().toString();
+        final String password = etPassword.getText().toString();
         //region 检查输入合法性
         if (TextUtils.isEmpty(username)) {
             Snackbar.make(getWindow().getDecorView(), R.string.User_name_cannot_be_empty, Snackbar.LENGTH_SHORT).show();
@@ -69,6 +70,8 @@ public class LoginActivity extends BaseActivity {
                     @Override
                     public void run() {
                         pd.dismiss();
+                        AppConfig.setUsername(username);
+                        AppConfig.setPassword(password);
                         Snackbar.make(getWindow().getDecorView(), R.string.login_success, Snackbar.LENGTH_SHORT).show();
                         startActivity(new Intent(LoginActivity.this, ChoseActivity.class));
                         LoginActivity.this.finish();
@@ -77,12 +80,17 @@ public class LoginActivity extends BaseActivity {
             }
 
             @Override
-            public void onError(int i, final String s) {
+            public void onError(final int i, final String s) {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         pd.dismiss();
-                        Snackbar.make(getWindow().getDecorView(), R.string.login_fail, Snackbar.LENGTH_SHORT).show();
+                        switch (i){
+                            case ERROR_EXCEPTION_INVALID_PASSWORD_USERNAME:
+                                Snackbar.make(getWindow().getDecorView(), R.string.login_fail_username_psw, Snackbar.LENGTH_SHORT).show();
+                                break;
+                        }
+                        int a=i;
                     }
                 });
             }
