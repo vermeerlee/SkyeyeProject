@@ -33,7 +33,7 @@ public class ContactUtil {
 
             @Override
             public void onContactInvited(final String username, String reason) {
-                Log.e("xmh-head-contact","rec-"+username);
+                Log.e("xmh-head-contact-invite","rec-"+username);
                 //收到好友邀请
                 if(TextUtils.isEmpty(reason)){
                     return;
@@ -51,6 +51,8 @@ public class ContactUtil {
                     public void run() {
                         try {
                             EMChatManager.getInstance().acceptInvitation(username);//需异步处理
+                            //TODO 在本地维护一个好友list，添加好友后因网络原因请求的好友列表之后，因此先添加到本地list。
+                            //TODO 添加后发送好友列表改变广播。
                         } catch (EaseMobException e) {
                             e.printStackTrace();
                         }

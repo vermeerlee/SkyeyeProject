@@ -504,27 +504,28 @@ public abstract class HXSDKHelper {
             @Override
             public void run(){
                 try {
-                    EMGroupManager.getInstance().getGroupsFromServer();
+//                    EMGroupManager.getInstance().getGroupsFromServer();
+                    Log.e("xmh-","getinsdk");
                     
-                    // in case that logout already before server returns, we should return immediately
-                    if(!EMChat.getInstance().isLoggedIn()){
-                        return;
-                    }
-                    
-                    hxModel.setGroupsSynced(true);
-                    
-                    isGroupsSyncedWithServer = true;
-                    isSyncingGroupsWithServer = false;
-                    if(callback != null){
-                        callback.onSuccess();
-                    }
-                } catch (EaseMobException e) {
-                    hxModel.setGroupsSynced(false);
-                    isGroupsSyncedWithServer = false;
-                    isSyncingGroupsWithServer = false;
-                    if(callback != null){
-                        callback.onError(e.getErrorCode(), e.toString());
-                    }
+//                    // in case that logout already before server returns, we should return immediately
+//                    if(!EMChat.getInstance().isLoggedIn()){
+//                        return;
+//                    }
+//
+//                    hxModel.setGroupsSynced(true);
+//
+//                    isGroupsSyncedWithServer = true;
+//                    isSyncingGroupsWithServer = false;
+//                    if(callback != null){
+//                        callback.onSuccess();
+//                    }
+                } catch (Exception e) {
+//                    hxModel.setGroupsSynced(false);
+//                    isGroupsSyncedWithServer = false;
+//                    isSyncingGroupsWithServer = false;
+//                    if(callback != null){
+//                        callback.onError(e.getErrorCode(), e.toString());
+//                    }
                 }
             
             }

@@ -175,11 +175,11 @@ public class MainActivity extends BaseActivity implements EMEventListener {
 
             @Override
             public void onSuccess() {
-                HXSDKHelper.getInstance().noitifyGroupSyncListeners(true);
-                
-                if(HXSDKHelper.getInstance().isContactsSyncedWithServer()){
-                    HXSDKHelper.getInstance().notifyForRecevingEvents();
-                }
+//                HXSDKHelper.getInstance().noitifyGroupSyncListeners(true);
+//
+//                if(HXSDKHelper.getInstance().isContactsSyncedWithServer()){
+//                    HXSDKHelper.getInstance().notifyForRecevingEvents();
+//                }
             }
 
             @Override
@@ -547,7 +547,7 @@ public class MainActivity extends BaseActivity implements EMEventListener {
 					String st10 = getResources().getString(R.string.have_you_removed);
 					if (ChatActivity.activityInstance != null
 							&& usernameList.contains(ChatActivity.activityInstance.getToChatUsername())) {
-						Toast.makeText(MainActivity.this, ChatActivity.activityInstance.getToChatUsername() + st10, 1)
+						Toast.makeText(MainActivity.this, ChatActivity.activityInstance.getToChatUsername() + st10, Toast.LENGTH_SHORT)
 								.show();
 						ChatActivity.activityInstance.finish();
 					}
@@ -562,6 +562,8 @@ public class MainActivity extends BaseActivity implements EMEventListener {
 
 		@Override
 		public void onContactInvited(String username, String reason) {
+
+			Log.e("xmh-","invited");
 			
 			// 接到邀请的消息，如果不处理(同意或拒绝)，掉线后，服务器会自动再发过来，所以客户端不需要重复提醒
 			List<InviteMessage> msgs = inviteMessgeDao.getMessagesList();
@@ -618,39 +620,39 @@ public class MainActivity extends BaseActivity implements EMEventListener {
 
 		@Override
 		public void onConnected() {
-            boolean groupSynced = HXSDKHelper.getInstance().isGroupsSyncedWithServer();
-            boolean contactSynced = HXSDKHelper.getInstance().isContactsSyncedWithServer();
+//            boolean groupSynced = HXSDKHelper.getInstance().isGroupsSyncedWithServer();
+//            boolean contactSynced = HXSDKHelper.getInstance().isContactsSyncedWithServer();
             
             // in case group and contact were already synced, we supposed to notify sdk we are ready to receive the events
-            if(groupSynced && contactSynced){
+//            if(groupSynced && contactSynced){
                 new Thread(){
                     @Override
                     public void run(){
                         HXSDKHelper.getInstance().notifyForRecevingEvents();
                     }
                 }.start();
-            }else{
+//            }else{
 //                if(!groupSynced){
-//                    asyncFetchGroupsFromServer();
+                    asyncFetchGroupsFromServer();
 //                }
 //
 //                if(!contactSynced){
-//                    asyncFetchContactsFromServer();
+                    asyncFetchContactsFromServer();
 //                }
 //
 //                if(!HXSDKHelper.getInstance().isBlackListSyncedWithServer()){
-//                    asyncFetchBlackListFromServer();
+                    asyncFetchBlackListFromServer();
 //                }
-            }
+//            }
             
-			runOnUiThread(new Runnable() {
-
-				@Override
-				public void run() {
-					chatHistoryFragment.errorItem.setVisibility(View.GONE);
-				}
-
-			});
+//			runOnUiThread(new Runnable() {
+//
+//				@Override
+//				public void run() {
+//					chatHistoryFragment.errorItem.setVisibility(View.GONE);
+//				}
+//
+//			});
 		}
 
 		@Override
