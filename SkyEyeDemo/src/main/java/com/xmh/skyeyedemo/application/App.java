@@ -2,13 +2,13 @@ package com.xmh.skyeyedemo.application;
 
 import android.app.ActivityManager;
 import android.app.Application;
-import android.content.IntentSender;
 import android.content.pm.PackageManager;
-import android.preference.PreferenceManager;
 import android.util.Log;
 
+import com.easemob.EMConnectionListener;
 import com.easemob.chat.EMChat;
 import com.easemob.chat.EMChatManager;
+import com.easemob.chat.EMChatOptions;
 
 import java.util.Iterator;
 import java.util.List;
@@ -18,10 +18,16 @@ import java.util.List;
  */
 public class App extends Application{
 
+    EMConnectionListener connectionListener;
+
     @Override
     public void onCreate() {
         super.onCreate();
 
+        initHuanXin();
+    }
+
+    private void initHuanXin() {
         //region 初始化环信SDK前的准备
         int pid = android.os.Process.myPid();
         String processAppName = getAppName(pid);
@@ -37,19 +43,28 @@ public class App extends Application{
             return;
         }
         //endregion
-        //关闭环信自动登录
-        EMChat.getInstance().setAutoLogin(false);
         //初始化环信SDK
         EMChat.getInstance().init(this);
-        //设置使用环信的好友体系
-        EMChatManager.getInstance().getChatOptions().setUseRoster(true);
-
         /**
          * debugMode == true 时为打开，sdk 会在log里输入调试信息
          * @param debugMode
          * 在做代码混淆的时候需要设置成false
          */
         EMChat.getInstance().setDebugMode(true);//在做打包混淆时，要关闭debug模式，避免消耗不必要的资源
+
+        initHuanXinOptions();
+
+        //关闭环信自动登录
+        EMChat.getInstance().setAutoLogin(false);
+
+    }
+    private void initHuanXinOptions() {
+        // 获取到EMChatOptions对象
+        EMChatOptions options = EMChatManager.getInstance().getChatOptions();
+        // 默认添加好友时，是不需要验证的，改成需要验证:false
+        options.setAcceptInvitationAlways(false);
+        // 默认环信是不维护好友关系列表的，如果app依赖环信的好友关系，把这个属性设置为true
+        options.setUseRoster(true);
     }
 
     /**初始化环信SDK前按需调用*/

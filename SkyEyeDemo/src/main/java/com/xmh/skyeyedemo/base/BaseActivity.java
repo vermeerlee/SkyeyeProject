@@ -68,7 +68,7 @@ public class BaseActivity extends AppCompatActivity {
         @Override
         public void onConnected() {
             //已连接到服务器
-            Log.e("xmh-connected","connected");
+            Log.e("xmh-connected", "connected");
         }
         @Override
         public void onDisconnected(final int error) {
@@ -78,7 +78,7 @@ public class BaseActivity extends AppCompatActivity {
                 public void run() {
                     if(error == EMError.USER_REMOVED){
                         // 显示帐号已经被移除
-                        Toast.makeText(BaseActivity.this, R.string.user_removed,Toast.LENGTH_LONG).show();
+                        Toast.makeText(BaseActivity.this, R.string.user_removed, Toast.LENGTH_LONG).show();
                         startActivity(new Intent(BaseActivity.this, LoginActivity.class));
                         BaseActivity.this.finish();
                     }else if (error == EMError.CONNECTION_CONFLICT) {

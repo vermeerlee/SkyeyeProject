@@ -4,6 +4,8 @@ import android.os.Bundle;
 import android.util.Log;
 
 import com.easemob.EMCallBack;
+import com.easemob.EMEventListener;
+import com.easemob.EMNotifierEvent;
 import com.easemob.chat.EMContactManager;
 import com.easemob.exceptions.EaseMobException;
 import com.xmh.skyeyedemo.R;
@@ -14,7 +16,7 @@ import com.xmh.skyeyedemo.utils.LoginUtil;
 
 import java.util.List;
 
-public class MainActivity extends BaseActivity {
+public class MainActivity extends BaseActivity implements EMEventListener {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,7 +27,7 @@ public class MainActivity extends BaseActivity {
         LoginUtil.relogin(AppConfig.getUsername() + LoginUtil.USERNAME_HEADEND, new EMCallBack() {
             @Override
             public void onSuccess() {
-                Log.e("xmh-login","head");
+                Log.e("xmh-login", "head");
                 initAfterLogin();
             }
 
@@ -65,5 +67,10 @@ public class MainActivity extends BaseActivity {
     @Override
     public void onBackPressed() {
         exitApp();
+    }
+
+    @Override
+    public void onEvent(EMNotifierEvent emNotifierEvent) {
+        Log.e("xmh","event");
     }
 }

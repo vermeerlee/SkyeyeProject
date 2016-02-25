@@ -18,6 +18,7 @@ public class ContactUtil {
 
     /**初始化好友状态监听,如果是username_开头则同意*/
     public static void initContactListener(){
+        //监听联系人变化
         EMContactManager.getInstance().setContactListener(new EMContactListener() {
 
             @Override

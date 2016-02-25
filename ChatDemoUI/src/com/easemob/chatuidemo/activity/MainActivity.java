@@ -148,7 +148,7 @@ public class MainActivity extends BaseActivity implements EMEventListener {
 		
 		init();
 		//异步获取当前用户的昵称和头像
-		((DemoHXSDKHelper)HXSDKHelper.getInstance()).getUserProfileManager().asyncGetCurrentUserInfo();
+//		((DemoHXSDKHelper)HXSDKHelper.getInstance()).getUserProfileManager().asyncGetCurrentUserInfo();
 	}
 
 	private void init() {     
@@ -161,11 +161,11 @@ public class MainActivity extends BaseActivity implements EMEventListener {
 		
 		groupChangeListener = new MyGroupChangeListener();
 		// 注册群聊相关的listener
-        EMGroupManager.getInstance().addGroupChangeListener(groupChangeListener);
+//        EMGroupManager.getInstance().addGroupChangeListener(groupChangeListener);
 		
 		
 		//内部测试方法，请忽略
-		registerInternalDebugReceiver();
+//		registerInternalDebugReceiver();
 	}
 
 
@@ -630,17 +630,17 @@ public class MainActivity extends BaseActivity implements EMEventListener {
                     }
                 }.start();
             }else{
-                if(!groupSynced){
-                    asyncFetchGroupsFromServer();
-                }
-                
-                if(!contactSynced){
-                    asyncFetchContactsFromServer();
-                }
-                
-                if(!HXSDKHelper.getInstance().isBlackListSyncedWithServer()){
-                    asyncFetchBlackListFromServer();
-                }
+//                if(!groupSynced){
+//                    asyncFetchGroupsFromServer();
+//                }
+//
+//                if(!contactSynced){
+//                    asyncFetchContactsFromServer();
+//                }
+//
+//                if(!HXSDKHelper.getInstance().isBlackListSyncedWithServer()){
+//                    asyncFetchBlackListFromServer();
+//                }
             }
             
 			runOnUiThread(new Runnable() {
