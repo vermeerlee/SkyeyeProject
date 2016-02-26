@@ -1,6 +1,13 @@
 package com.xmh.skyeyedemo.activity;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
+import android.support.v4.content.LocalBroadcastManager;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 
 import com.easemob.EMCallBack;
@@ -10,8 +17,8 @@ import com.easemob.EMNotifierEvent;
 import com.easemob.chat.EMChat;
 import com.easemob.chat.EMChatManager;
 import com.easemob.chat.EMContactManager;
-import com.easemob.chat.EMGroupManager;
 import com.easemob.exceptions.EaseMobException;
+import com.xmh.skyeyedemo.EyeListAdapter;
 import com.xmh.skyeyedemo.R;
 import com.xmh.skyeyedemo.application.AppConfig;
 import com.xmh.skyeyedemo.base.BaseActivity;
@@ -20,12 +27,20 @@ import com.xmh.skyeyedemo.utils.LoginUtil;
 
 import java.util.List;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
+
 public class MainActivity extends BaseActivity implements EMEventListener {
+
+    @Bind(R.id.rv_eye_list)RecyclerView rvEyeList;
+    private EyeListAdapter mEyeListAdapter;
+    private ContactChangeReceiver receiver=new ContactChangeReceiver();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        ButterKnife.bind(this);
 
         //退出登录并使用username_head登录
         LoginUtil.relogin(AppConfig.getUsername() + LoginUtil.USERNAME_HEADEND, new EMCallBack() {
@@ -45,13 +60,22 @@ public class MainActivity extends BaseActivity implements EMEventListener {
                 //do nothing
             }
         });
-        //TODO 注册好友列表改变广播监听，在接收到时更新UI
+        //注册好友列表改变广播监听
+        LocalBroadcastManager.getInstance(this).registerReceiver(receiver, new IntentFilter(ContactUtil.ACTION_CONTACT_CHANGED));
+
+        initView();
+    }
+
+    private void initView() {
+        rvEyeList.setLayoutManager(new LinearLayoutManager(this));
+        mEyeListAdapter = new EyeListAdapter(this);
+        rvEyeList.setAdapter(mEyeListAdapter);
     }
 
     /**登录后的初始化操作*/
     private void initAfterLogin() {
         //注册一个监听连接状态的listener,连接成功后获取添加好友请求与好友列表
-        EMChatManager.getInstance().addConnectionListener(new EMConnectionListener(){
+        EMChatManager.getInstance().addConnectionListener(new EMConnectionListener() {
             @Override
             public void onConnected() {
                 //登录且EMConnectionListener.onConnected时调用
@@ -64,16 +88,23 @@ public class MainActivity extends BaseActivity implements EMEventListener {
                 //do nothing
             }
         });
-        //监听添加好友请求，如果是username_开头则同意
-        ContactUtil.initContactListener();
+        //监听添加好友请求
+        ContactUtil.initContactListener(this);
         //获取用户列表并展示
         new Thread(new Runnable() {
             @Override
             public void run() {
                 try {
-                    List<String> usernames = EMContactManager.getInstance().getContactUserNames();//需异步执行
-                    //TODO 将列表保存到本地维护的好友列表
-                    //TODO 将列表显示到UI
+                    final List<String> usernames = EMContactManager.getInstance().getContactUserNames();//需异步执行
+                    //将列表保存到本地维护的好友列表
+                    ContactUtil.setContacts(usernames);
+                    //将列表显示到UI
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            mEyeListAdapter.setEyeList(usernames);
+                        }
+                    });
                 } catch (EaseMobException e) {
                     e.printStackTrace();
                 }
@@ -88,8 +119,30 @@ public class MainActivity extends BaseActivity implements EMEventListener {
 
     @Override
     public void onEvent(EMNotifierEvent emNotifierEvent) {
-        Log.e("xmh","event");
+        Log.e("xmh", "event");
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(receiver);
+    }
+
+    /**好友列表改变监听*/
+    class ContactChangeReceiver extends BroadcastReceiver{
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            //更新UI
+            final List<String> contacts = ContactUtil.getContacts();
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    mEyeListAdapter.setEyeList(contacts);
+                }
+            });
+
+        }
+    }
 
 }
