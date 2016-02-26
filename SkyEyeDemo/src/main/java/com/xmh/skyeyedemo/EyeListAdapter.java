@@ -19,7 +19,7 @@ public class EyeListAdapter extends RecyclerView.Adapter<EyeListAdapter.EyeViewH
     private List<String> mEyeList=new ArrayList<>();
 
     public EyeListAdapter(Context context){
-        mContext=mContext;
+        mContext=context;
     }
 
     public void setEyeList(List<String> list){
