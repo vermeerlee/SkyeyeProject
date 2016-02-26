@@ -17,6 +17,11 @@ public class EyeListAdapter extends RecyclerView.Adapter<EyeListAdapter.EyeViewH
 
     private Context mContext;
     private List<String> mEyeList=new ArrayList<>();
+    private OnItemClickListener listener;
+
+    public void setOnItemClickListener(OnItemClickListener listener){
+        this.listener=listener;
+    }
 
     public EyeListAdapter(Context context){
         mContext=context;
@@ -32,14 +37,22 @@ public class EyeListAdapter extends RecyclerView.Adapter<EyeListAdapter.EyeViewH
 
     @Override
     public EyeViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view= LayoutInflater.from(mContext).inflate(R.layout.layout_eye_item,parent,false);
+        View view= LayoutInflater.from(mContext).inflate(R.layout.layout_eye_item, parent, false);
         return new EyeViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(EyeViewHolder holder, int position) {
+    public void onBindViewHolder(EyeViewHolder holder, final int position) {
         holder.btnEyeName.setText(mEyeList.get(position));
         //TODO 添加点击事件，点击时开启视频请求
+        holder.btnEyeName.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (listener!=null){
+                    listener.onClick(mEyeList.get(position));
+                }
+            }
+        });
     }
 
     @Override
@@ -55,5 +68,9 @@ public class EyeListAdapter extends RecyclerView.Adapter<EyeListAdapter.EyeViewH
             super(itemView);
             btnEyeName= (Button) itemView.findViewById(R.id.btn_eye_name);
         }
+    }
+
+    public interface OnItemClickListener{
+        public abstract void onClick(String username);
     }
 }

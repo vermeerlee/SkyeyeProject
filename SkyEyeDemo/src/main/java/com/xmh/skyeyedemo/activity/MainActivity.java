@@ -5,10 +5,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.easemob.EMCallBack;
 import com.easemob.EMConnectionListener;
@@ -69,6 +71,17 @@ public class MainActivity extends BaseActivity implements EMEventListener {
     private void initView() {
         rvEyeList.setLayoutManager(new LinearLayoutManager(this));
         mEyeListAdapter = new EyeListAdapter(this);
+        mEyeListAdapter.setOnItemClickListener(new EyeListAdapter.OnItemClickListener() {
+            @Override
+            public void onClick(String username) {
+                if (!EMChatManager.getInstance().isConnected())
+                    Snackbar.make(getWindow().getDecorView(),R.string.network_isnot_available,Snackbar.LENGTH_SHORT).show();
+                else{
+                    startActivity(new Intent(this, VideoCallActivity.class).putExtra("username", username).putExtra(
+                            "isComingCall", false));
+                }
+            }
+        });
         rvEyeList.setAdapter(mEyeListAdapter);
     }
 
