@@ -4,6 +4,9 @@ import android.os.Bundle;
 import android.util.Log;
 
 import com.easemob.EMCallBack;
+import com.easemob.EMConnectionListener;
+import com.easemob.chat.EMChat;
+import com.easemob.chat.EMChatManager;
 import com.easemob.chat.EMContactManager;
 import com.easemob.exceptions.EaseMobException;
 import com.xmh.skyeyedemo.R;
@@ -44,6 +47,20 @@ public class WatchActivity extends BaseActivity {
     }
 
     private void initAfterLogin() {
+        //注册一个监听连接状态的listener,连接成功后接受广播
+        EMChatManager.getInstance().addConnectionListener(new EMConnectionListener(){
+            @Override
+            public void onConnected() {
+                //登录且EMConnectionListener.onConnected时调用
+                // 通知sdk，UI 已经初始化完毕，注册了相应的receiver和listener, 可以接受broadcast了
+                EMChat.getInstance().setAppInited();
+            }
+
+            @Override
+            public void onDisconnected(int i) {
+                //do nothing
+            }
+        });
         //获取好友列表，如果没有username_head则添加
         new Thread(new Runnable() {
             @Override

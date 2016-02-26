@@ -13,12 +13,6 @@
  */
 package com.easemob.chatuidemo.activity;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -57,7 +51,6 @@ import com.easemob.chat.EMMessage.ChatType;
 import com.easemob.chat.EMMessage.Type;
 import com.easemob.chat.TextMessageBody;
 import com.easemob.chatuidemo.Constant;
-import com.easemob.chatuidemo.DemoApplication;
 import com.easemob.chatuidemo.DemoHXSDKHelper;
 import com.easemob.chatuidemo.R;
 import com.easemob.chatuidemo.db.InviteMessgeDao;
@@ -69,6 +62,12 @@ import com.easemob.chatuidemo.utils.CommonUtils;
 import com.easemob.util.EMLog;
 import com.easemob.util.HanziToPinyin;
 import com.easemob.util.NetUtils;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 public class MainActivity extends BaseActivity implements EMEventListener {
 
@@ -620,39 +619,15 @@ public class MainActivity extends BaseActivity implements EMEventListener {
 
 		@Override
 		public void onConnected() {
-//            boolean groupSynced = HXSDKHelper.getInstance().isGroupsSyncedWithServer();
-//            boolean contactSynced = HXSDKHelper.getInstance().isContactsSyncedWithServer();
-            
-            // in case group and contact were already synced, we supposed to notify sdk we are ready to receive the events
-//            if(groupSynced && contactSynced){
                 new Thread(){
                     @Override
                     public void run(){
                         HXSDKHelper.getInstance().notifyForRecevingEvents();
                     }
                 }.start();
-//            }else{
-//                if(!groupSynced){
                     asyncFetchGroupsFromServer();
-//                }
-//
-//                if(!contactSynced){
                     asyncFetchContactsFromServer();
-//                }
-//
-//                if(!HXSDKHelper.getInstance().isBlackListSyncedWithServer()){
                     asyncFetchBlackListFromServer();
-//                }
-//            }
-            
-//			runOnUiThread(new Runnable() {
-//
-//				@Override
-//				public void run() {
-//					chatHistoryFragment.errorItem.setVisibility(View.GONE);
-//				}
-//
-//			});
 		}
 
 		@Override
