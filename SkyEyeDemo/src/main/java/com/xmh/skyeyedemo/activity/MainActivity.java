@@ -10,7 +10,6 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.easemob.EMCallBack;
 import com.easemob.EMConnectionListener;
@@ -73,12 +72,11 @@ public class MainActivity extends BaseActivity implements EMEventListener {
         mEyeListAdapter = new EyeListAdapter(this);
         mEyeListAdapter.setOnItemClickListener(new EyeListAdapter.OnItemClickListener() {
             @Override
-            public void onClick(String username) {
+            public void onClick(String eyeName) {
                 if (!EMChatManager.getInstance().isConnected())
                     Snackbar.make(getWindow().getDecorView(),R.string.network_isnot_available,Snackbar.LENGTH_SHORT).show();
                 else{
-                    startActivity(new Intent(this, VideoCallActivity.class).putExtra("username", username).putExtra(
-                            "isComingCall", false));
+                    startActivity(new Intent(MainActivity.this, VideoActivity.class).putExtra("eyeName", eyeName));
                 }
             }
         });
@@ -138,7 +136,9 @@ public class MainActivity extends BaseActivity implements EMEventListener {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        LocalBroadcastManager.getInstance(this).unregisterReceiver(receiver);
+        if(receiver!=null) {
+            LocalBroadcastManager.getInstance(this).unregisterReceiver(receiver);
+        }
     }
 
     /**好友列表改变监听*/

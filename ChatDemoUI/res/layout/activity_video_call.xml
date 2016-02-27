@@ -37,6 +37,7 @@
                 android:textSize="22sp"
                 android:visibility="visible" />
 
+            <!--计时显示-->
             <com.easemob.chatuidemo.widget.MyChronometer
                 android:id="@+id/chronometer"
                 android:layout_width="wrap_content"
@@ -49,7 +50,8 @@
                 android:id="@+id/tv_is_p2p"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="#fff" />
+                android:textColor="#fff"
+                />
 
             <TextView
                 android:id="@+id/tv_nick"

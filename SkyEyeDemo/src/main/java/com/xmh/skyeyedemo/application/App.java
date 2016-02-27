@@ -58,6 +58,8 @@ public class App extends Application{
         EMChat.getInstance().setAutoLogin(false);
 
     }
+
+
     private void initHuanXinOptions() {
         // 获取到EMChatOptions对象
         EMChatOptions options = EMChatManager.getInstance().getChatOptions();
@@ -91,6 +93,5 @@ public class App extends Application{
         }
         return processName;
     }
-
 
 }

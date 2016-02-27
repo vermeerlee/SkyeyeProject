@@ -13,16 +13,10 @@
  */
 package com.easemob.applib.controller;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
-import android.R.bool;
 import android.app.ActivityManager;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.easemob.EMCallBack;
 import com.easemob.EMConnectionListener;
@@ -37,8 +31,11 @@ import com.easemob.chat.EMChatConfig.EMEnvMode;
 import com.easemob.chat.EMChatManager;
 import com.easemob.chat.EMChatOptions;
 import com.easemob.chat.EMContactManager;
-import com.easemob.chat.EMGroupManager;
 import com.easemob.exceptions.EaseMobException;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * The developer can derive from this class to talk with HuanXin SDK
@@ -47,7 +44,7 @@ import com.easemob.exceptions.EaseMobException;
  * this is a global instance class which can be obtained in any codes through getInstance()
  * 
  * 开发人员可以选择继承这个环信SDK帮助类去加快初始化集成速度。此类会初始化环信SDK，并设置初始化参数和初始化相应的监听器
- * 不过继承类需要根据要求求提供相应的函数，尤其是提供一个{@link HXSDKModel}. 所以请实现abstract protected HXSDKModel createModel();
+ * 不过继承供相应类需要根据要求求提的函数，尤其是提供一个{@link HXSDKModel}. 所以请实现abstract protected HXSDKModel createModel();
  * 全局仅有一个此类的实例存在，所以可以在任意地方通过getInstance()函数获取此全局实例
  * 
  * @author easemob

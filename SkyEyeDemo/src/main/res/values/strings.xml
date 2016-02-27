@@ -15,4 +15,12 @@
     <string name="head_mode">HeadMode</string>
     <string name="user_removed">您的账号已被移除，请联系管理员</string>
     <string name="relogined">您的账号已在别处登录！</string>
+    <string name="btn_over">断开</string>
+    <string name="connect_fail">连接失败</string>
+    <string name="connecting">正在连接</string>
+    <string name="waiting_for_eye">正在等待终端响应</string>
+    <string name="refused">已拒绝</string>
+    <string name="peer_offline">该终端未联网</string>
+    <string name="busy">该终端网络繁忙</string>
+    <string name="not_answer">该终端未响应</string>
 </resources>
