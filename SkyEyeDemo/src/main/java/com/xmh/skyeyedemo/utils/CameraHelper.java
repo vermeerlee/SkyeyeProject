@@ -13,7 +13,7 @@ import com.easemob.chat.EMVideoCallHelper;
 /**
  * Created by xmh19 on 2016/2/27 027.
  */
-public class CameraHelper {
+public class CameraHelper implements Camera.PreviewCallback {
 
     static final int mwidth = 320;
     static final int mheight = 240;
@@ -36,7 +36,7 @@ public class CameraHelper {
 
     }
 
-    public static void YUV420spRotate90(byte[]  dst, byte[] src, int srcWidth, int srcHeight) {
+    void YUV420spRotate90(byte[]  dst, byte[] src, int srcWidth, int srcHeight) {
         int nWidth = 0, nHeight = 0;
         int wh = 0;
         int uvHeight = 0;
@@ -69,7 +69,7 @@ public class CameraHelper {
         return;
     }
 
-    public static void YUV420spRotate180(byte[]  dst, byte[] src, int srcWidth, int srcHeight) {
+    void YUV420spRotate180(byte[]  dst, byte[] src, int srcWidth, int srcHeight) {
         int nWidth = 0, nHeight = 0;
         int wh = 0;
         int uvsize = 0;
@@ -91,7 +91,7 @@ public class CameraHelper {
         return;
     }
 
-    public static void YUV420spRotate270(byte[]  dst, byte[] src, int srcWidth, int srcHeight) {
+    void YUV420spRotate270(byte[]  dst, byte[] src, int srcWidth, int srcHeight) {
         int nWidth = 0, nHeight = 0;
         int wh = 0;
         int uvHeight = 0;
@@ -125,7 +125,7 @@ public class CameraHelper {
         return;
     }
 
-    public static void YUV42left2right(byte[] dst, byte[] src, int srcWidth, int srcHeight) {
+    void YUV42left2right(byte[] dst, byte[] src, int srcWidth, int srcHeight) {
         // int nWidth = 0, nHeight = 0;
         int wh = 0;
         int uvHeight = 0;
@@ -168,7 +168,6 @@ public class CameraHelper {
         try {
             cameraInfo = new Camera.CameraInfo();
             if (mCamera == null) {
-                // mCamera = Camera.open();
                 camera_count = Camera.getNumberOfCameras();
                 Log.e("xmh-camera", "camera count:" + camera_count);
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD) {
@@ -193,15 +192,17 @@ public class CameraHelper {
 
             mCamera.stopPreview();
             mParameters = mCamera.getParameters();
+            //region 调整本地显示方向
             if (isScreenOriatationPortrait()) {
                 if(cameraInfo.orientation == 270 || cameraInfo.orientation == 0)
                     mCamera.setDisplayOrientation(90);
                 if(cameraInfo.orientation == 90)
-                    mCamera.setDisplayOrientation(270);
+                    mCamera.setDisplayOrientation(90);
             }else{
                 if(cameraInfo.orientation == 90)
                     mCamera.setDisplayOrientation(180);
             }
+            //endregion
 
             mParameters.setPreviewSize(mwidth, mheight);
             mParameters.setPreviewFrameRate(15);
@@ -215,35 +216,7 @@ public class CameraHelper {
             mCamera.addCallbackBuffer(yuv_frame);
 //             mCamera.setPreviewDisplay(holder);
             mCamera.setPreviewDisplay(mSurfaceHolder);
-            mCamera.setPreviewCallbackWithBuffer(new Camera.PreviewCallback() {
-                @Override
-                public void onPreviewFrame(byte[] data, Camera camera) {
-                    if (startFlag == true) {
-                        // 根据屏幕方向写入及传输数据
-                        if (isScreenOriatationPortrait()) {
-                            if(cameraInfo.orientation == 90 || cameraInfo.orientation == 0)
-                                CameraHelper.YUV420spRotate90(yuv_Rotate90, yuv_frame, mwidth, mheight);
-                            else if(cameraInfo.orientation == 270)
-                                CameraHelper.YUV420spRotate270(yuv_Rotate90, yuv_frame, mwidth, mheight);
-                            mCallHelper.processPreviewData(mheight, mwidth, yuv_Rotate90);
-                        } else {
-                            if(cameraInfo.orientation == 90 || cameraInfo.orientation == 0)
-                            {
-                                CameraHelper.YUV420spRotate180(yuv_Rotate90, yuv_frame, mwidth, mheight);
-                                CameraHelper.YUV42left2right(yuv_frame, yuv_Rotate90, mwidth, mheight);
-                                mCallHelper.processPreviewData(mheight, mwidth, yuv_frame);
-                            }
-                            else
-                            {
-                                CameraHelper.YUV42left2right(yuv_Rotate90, yuv_frame, mwidth, mheight);
-                                mCallHelper.processPreviewData(mheight, mwidth, yuv_Rotate90);
-                            }
-
-                        }
-                    }
-                    camera.addCallbackBuffer(yuv_frame);
-                }
-            });
+            mCamera.setPreviewCallbackWithBuffer(this);
 
             EMVideoCallHelper.getInstance().setResolution(mwidth, mheight);
 
@@ -254,6 +227,37 @@ public class CameraHelper {
             if(mCamera != null)
                 mCamera.release();
         }
+    }
+
+    @Override
+    public void onPreviewFrame(byte[] data, Camera camera) {
+
+        if (startFlag == true) {
+            //region 根据屏幕方向写入及传输数据
+            if (isScreenOriatationPortrait()) {
+                if(cameraInfo.orientation == 90 || cameraInfo.orientation == 0) {
+                    YUV420spRotate90(yuv_Rotate90, yuv_frame, mwidth, mheight);
+                }else if(cameraInfo.orientation == 270)
+                    YUV420spRotate270(yuv_Rotate90, yuv_frame, mwidth, mheight);
+                mCallHelper.processPreviewData(mheight, mwidth, yuv_Rotate90);
+            } else {
+                if(cameraInfo.orientation == 90 || cameraInfo.orientation == 0)
+                {
+                    YUV420spRotate180(yuv_Rotate90, yuv_frame, mwidth, mheight);
+                    YUV42left2right(yuv_frame, yuv_Rotate90, mwidth, mheight);
+                    mCallHelper.processPreviewData(mheight, mwidth, yuv_frame);
+                }
+                else
+                {
+                    YUV42left2right(yuv_Rotate90, yuv_frame, mwidth, mheight);
+                    mCallHelper.processPreviewData(mheight, mwidth, yuv_Rotate90);
+                }
+
+            }
+            //endregion
+        }
+        camera.addCallbackBuffer(yuv_frame);
+
     }
 
     public void setStartFlag(boolean startFlag) {
@@ -275,7 +279,7 @@ public class CameraHelper {
     }
 
     private boolean isScreenOriatationPortrait() {
-        return mContext.getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT;
+        return mContext.getApplicationContext().getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT;
     }
 
 }

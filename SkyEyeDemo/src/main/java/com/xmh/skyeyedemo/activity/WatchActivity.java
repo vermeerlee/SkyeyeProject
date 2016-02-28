@@ -43,9 +43,7 @@ public class WatchActivity extends BaseActivity {
      * 视频请求监听
      */
     private CallReceiver callReceiver;
-    //region 视频需要
     private EMVideoCallHelper callHelper;
-    //endregion
     private EMCallStateChangeListener callStateListener;
     private EMConnectionListener connectionListener;
     private NewMessageBroadcastReceiver msgReceiver;
@@ -86,8 +84,8 @@ public class WatchActivity extends BaseActivity {
             }
         });
 
-        surface.setZOrderMediaOverlay(true);
-        surface.setZOrderOnTop(true);
+//        surface.setZOrderMediaOverlay(true);
+//        surface.setZOrderOnTop(true);
         callHelper = EMVideoCallHelper.getInstance();
         cameraHelper = new CameraHelper(this, callHelper, surface.getHolder());
 
@@ -122,6 +120,9 @@ public class WatchActivity extends BaseActivity {
         if (isGoing) {
             isGoing=false;
             EMChatManager.getInstance().endCall();
+        }
+        if(callReceiver!=null){
+            unregisterReceiver(callReceiver);
         }
     }
 
@@ -214,7 +215,7 @@ public class WatchActivity extends BaseActivity {
             callReceiver = new CallReceiver();
         }
         //注册通话广播接收者
-        this.registerReceiver(callReceiver, callFilter);
+        registerReceiver(callReceiver, callFilter);
     }
 
     /**注册监听*/

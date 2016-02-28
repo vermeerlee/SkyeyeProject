@@ -38,7 +38,6 @@ public class VideoActivity extends BaseActivity {
     Button btnOver;
 
     private String eyeName;
-    private SurfaceHolder eyeSurfaceHolder;
     private EMVideoCallHelper callHelper;
     private boolean isStarted = false;
     protected EMCallStateChangeListener callStateListener;
@@ -67,10 +66,9 @@ public class VideoActivity extends BaseActivity {
         tvEyeName.setText(eyeName);
 
         //显示eye图像
-        eyeSurfaceHolder = eyeSurface.getHolder();
         callHelper = EMVideoCallHelper.getInstance();
         callHelper.setSurfaceView(eyeSurface);
-        eyeSurfaceHolder.addCallback(new EyeCallBack());
+        eyeSurface.getHolder().addCallback(new EyeCallBack());
 
         //设置连接状态监听
         setCallStateListener();
@@ -149,9 +147,9 @@ public class VideoActivity extends BaseActivity {
                             @Override
                             public void run() {
                                 //默认静音
+                                openSpeakerOn();
                                 audioManager.setMicrophoneMute(true);
                                 isSpeaking = false;
-                                openSpeakerOn();
                                 tvConnectStatus.setVisibility(View.INVISIBLE);
                             }
                         });
@@ -203,8 +201,6 @@ public class VideoActivity extends BaseActivity {
         };
         EMChatManager.getInstance().addVoiceCallStateChangeListener(callStateListener);
     }
-
-
 
     /**
      * 打开扬声器
