@@ -4,10 +4,13 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.media.AudioManager;
 import android.os.Bundle;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+import android.view.WindowManager;
 
 import com.easemob.EMCallBack;
 import com.easemob.EMConnectionListener;
@@ -20,7 +23,9 @@ import com.easemob.exceptions.EaseMobException;
 import com.xmh.skyeyedemo.R;
 import com.xmh.skyeyedemo.application.AppConfig;
 import com.xmh.skyeyedemo.base.BaseActivity;
+import com.xmh.skyeyedemo.receiver.NewMessageBroadcastReceiver;
 import com.xmh.skyeyedemo.utils.CameraHelper;
+import com.xmh.skyeyedemo.utils.CommendUtil;
 import com.xmh.skyeyedemo.utils.CommonUtil;
 import com.xmh.skyeyedemo.utils.LoginUtil;
 
@@ -31,7 +36,8 @@ import butterknife.ButterKnife;
 
 public class WatchActivity extends BaseActivity {
 
-    @Bind(R.id.surface)SurfaceView surface;
+    @Bind(R.id.surface)
+    SurfaceView surface;
 
     /**
      * 视频请求监听
@@ -41,7 +47,11 @@ public class WatchActivity extends BaseActivity {
     private EMVideoCallHelper callHelper;
     //endregion
     private EMCallStateChangeListener callStateListener;
+    private EMConnectionListener connectionListener;
+    private NewMessageBroadcastReceiver msgReceiver;
     private CameraHelper cameraHelper;
+    private AudioManager audioManager;
+    private boolean isGoing = false;
 
 
     //TODO 监听视频请求如果是username开头则接受
@@ -51,6 +61,11 @@ public class WatchActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_watch);
         ButterKnife.bind(this);
+
+        getWindow().addFlags(
+                WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON//保持屏幕常亮
+                        | WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD//关闭键盘
+        );
 
         //退出登录并使用username_uuid登录,记着拼接下划线(LoginUtil.USERNAME_EYE_DEPART)
         LoginUtil.relogin(AppConfig.getUsername() + LoginUtil.USERNAME_EYE_DEPART + CommonUtil.getUUID(this), new EMCallBack() {
@@ -71,11 +86,46 @@ public class WatchActivity extends BaseActivity {
             }
         });
 
+        surface.setZOrderMediaOverlay(true);
+        surface.setZOrderOnTop(true);
+        callHelper = EMVideoCallHelper.getInstance();
+        cameraHelper = new CameraHelper(this, callHelper, surface.getHolder());
+
+        callHelper.setSurfaceView(null);
+        surface.getHolder().addCallback(new LocalCallback());
+
         //设置视频状态监听
-        addCallStateListener();
+        setCallStateListener();
+        setConnectionListener();
+        audioManager = (AudioManager) this.getSystemService(Context.AUDIO_SERVICE);
+        audioManager.setMode(AudioManager.MODE_RINGTONE);
+        audioManager.setSpeakerphoneOn(true);
+
+        LocalBroadcastManager.getInstance(this).registerReceiver(new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                if(isGoing){
+                    //结束通话
+                    EMChatManager.getInstance().endCall();
+                    isGoing=false;
+                }
+            }
+        },new IntentFilter(CommendUtil.ACTION_END_CALL));
     }
 
-    private void addCallStateListener() {
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        callHelper.setSurfaceView(null);
+        cameraHelper.stopCapture();
+        cameraHelper = null;
+        if (isGoing) {
+            isGoing=false;
+            EMChatManager.getInstance().endCall();
+        }
+    }
+
+    private void setCallStateListener() {
 
         callStateListener = new EMCallStateChangeListener() {
             @Override
@@ -85,7 +135,8 @@ public class WatchActivity extends BaseActivity {
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                cameraHelper.stopCapture();
+//                                cameraHelper.stopCapture();
+                                isGoing = false;
                             }
                         });
                         break;
@@ -96,9 +147,31 @@ public class WatchActivity extends BaseActivity {
 
     }
 
+    private void setConnectionListener() {
+        connectionListener = new EMConnectionListener() {
+
+            @Override
+            public void onConnected() {
+
+            }
+
+            @Override
+            public void onDisconnected(int i) {
+                if (isGoing) {
+                    isGoing = false;
+                    EMChatManager.getInstance().endCall();
+                }
+            }
+        };
+        EMChatManager.getInstance().addConnectionListener(connectionListener);
+
+    }
+
     private void initAfterLogin() {
         //初始化视频请求监听
         initCallListener();
+        //初始化消息监听
+//        initMessageReceiver();
         //注册一个监听连接状态的listener,连接成功后接受广播
         EMChatManager.getInstance().addConnectionListener(new EMConnectionListener() {
             @Override
@@ -144,8 +217,19 @@ public class WatchActivity extends BaseActivity {
         this.registerReceiver(callReceiver, callFilter);
     }
 
+    /**注册监听*/
+    private void initMessageReceiver() {
+        msgReceiver = new NewMessageBroadcastReceiver();
+        IntentFilter intentFilter = new IntentFilter(EMChatManager.getInstance().getNewMessageBroadcastAction());
+        intentFilter.setPriority(3);
+        registerReceiver(msgReceiver, intentFilter);
+    }
+
     @Override
     public void onBackPressed() {
+        if (isGoing) {
+            return;
+        }
         exitApp();
     }
 
@@ -173,13 +257,11 @@ public class WatchActivity extends BaseActivity {
      */
     private void answerCall() {
         Log.e("xmh-call", "receive");
-        callHelper = EMVideoCallHelper.getInstance();
-        cameraHelper = new CameraHelper(this,callHelper,surface.getHolder());
-        surface.getHolder().addCallback(new LocalCallback());
-        cameraHelper.setStartFlag(true);
         try {
             EMChatManager.getInstance().answerCall();
-//            cameraHelper.setStartFlag(true);
+            cameraHelper.setStartFlag(true);
+            openSpeakerOn();
+            isGoing = true;
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -187,7 +269,6 @@ public class WatchActivity extends BaseActivity {
 
     /**
      * 本地SurfaceHolder callback
-     *
      */
     class LocalCallback implements SurfaceHolder.Callback {
 
@@ -205,4 +286,14 @@ public class WatchActivity extends BaseActivity {
         }
     }
 
+    // 打开扬声器
+    protected void openSpeakerOn() {
+        try {
+            if (!audioManager.isSpeakerphoneOn())
+                audioManager.setSpeakerphoneOn(true);
+            audioManager.setMode(AudioManager.MODE_IN_COMMUNICATION);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }

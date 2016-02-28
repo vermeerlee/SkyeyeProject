@@ -2,6 +2,7 @@ package com.xmh.skyeyedemo.application;
 
 import android.app.ActivityManager;
 import android.app.Application;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.util.Log;
 
@@ -9,6 +10,7 @@ import com.easemob.EMConnectionListener;
 import com.easemob.chat.EMChat;
 import com.easemob.chat.EMChatManager;
 import com.easemob.chat.EMChatOptions;
+import com.xmh.skyeyedemo.receiver.NewMessageBroadcastReceiver;
 
 import java.util.Iterator;
 import java.util.List;
@@ -19,12 +21,23 @@ import java.util.List;
 public class App extends Application{
 
     EMConnectionListener connectionListener;
+    private NewMessageBroadcastReceiver msgReceiver;
 
     @Override
     public void onCreate() {
         super.onCreate();
 
         initHuanXin();
+
+        initReceiver();
+    }
+
+    /**注册监听*/
+    private void initReceiver() {
+        msgReceiver = new NewMessageBroadcastReceiver();
+        IntentFilter intentFilter = new IntentFilter(EMChatManager.getInstance().getNewMessageBroadcastAction());
+        intentFilter.setPriority(3);
+        registerReceiver(msgReceiver, intentFilter);
     }
 
     private void initHuanXin() {
@@ -60,6 +73,7 @@ public class App extends Application{
     }
 
 
+    /**初始化环信配置*/
     private void initHuanXinOptions() {
         // 获取到EMChatOptions对象
         EMChatOptions options = EMChatManager.getInstance().getChatOptions();

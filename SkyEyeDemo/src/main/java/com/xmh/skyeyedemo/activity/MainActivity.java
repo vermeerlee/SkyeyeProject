@@ -19,7 +19,7 @@ import com.easemob.chat.EMChat;
 import com.easemob.chat.EMChatManager;
 import com.easemob.chat.EMContactManager;
 import com.easemob.exceptions.EaseMobException;
-import com.xmh.skyeyedemo.EyeListAdapter;
+import com.xmh.skyeyedemo.adapter.EyeListAdapter;
 import com.xmh.skyeyedemo.R;
 import com.xmh.skyeyedemo.application.AppConfig;
 import com.xmh.skyeyedemo.base.BaseActivity;

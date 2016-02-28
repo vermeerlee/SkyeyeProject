@@ -21,6 +21,6 @@
     <string name="waiting_for_eye">正在等待终端响应</string>
     <string name="refused">已拒绝</string>
     <string name="peer_offline">该终端未联网</string>
-    <string name="busy">该终端网络繁忙</string>
+    <string name="busy">该终端网络繁忙,正在尝试重连</string>
     <string name="not_answer">该终端未响应</string>
 </resources>

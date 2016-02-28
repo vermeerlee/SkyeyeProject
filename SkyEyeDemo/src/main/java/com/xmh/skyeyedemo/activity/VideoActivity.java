@@ -18,6 +18,7 @@ import com.easemob.chat.EMVideoCallHelper;
 import com.easemob.exceptions.EMServiceNotReadyException;
 import com.xmh.skyeyedemo.R;
 import com.xmh.skyeyedemo.base.BaseActivity;
+import com.xmh.skyeyedemo.utils.CommendUtil;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -25,19 +26,24 @@ import butterknife.OnClick;
 
 public class VideoActivity extends BaseActivity {
 
-    @Bind(R.id.tv_eye_name)TextView tvEyeName;
-    @Bind(R.id.tv_connect_status)TextView tvConnectStatus;
-    @Bind(R.id.surface_video)SurfaceView eyeSurface;
-    @Bind(R.id.iv_speak)ImageView ivSpeak;
-    @Bind(R.id.btn_over)Button btnOver;
+    @Bind(R.id.tv_eye_name)
+    TextView tvEyeName;
+    @Bind(R.id.tv_connect_status)
+    TextView tvConnectStatus;
+    @Bind(R.id.surface_video)
+    SurfaceView eyeSurface;
+    @Bind(R.id.iv_speak)
+    ImageView ivSpeak;
+    @Bind(R.id.btn_over)
+    Button btnOver;
 
     private String eyeName;
     private SurfaceHolder eyeSurfaceHolder;
     private EMVideoCallHelper callHelper;
-    private boolean isStarted=false;
+    private boolean isStarted = false;
     protected EMCallStateChangeListener callStateListener;
     protected AudioManager audioManager;
-    private boolean isSpeaking=false;
+    private boolean isSpeaking = false;
 
 
     @Override
@@ -47,6 +53,8 @@ public class VideoActivity extends BaseActivity {
         ButterKnife.bind(this);
 
         audioManager = (AudioManager) this.getSystemService(Context.AUDIO_SERVICE);
+        audioManager.setMicrophoneMute(true);
+
 
         getWindow().addFlags(
                 WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON//保持屏幕常亮
@@ -82,39 +90,41 @@ public class VideoActivity extends BaseActivity {
         super.onDestroy();
         audioManager.setMode(AudioManager.MODE_NORMAL);
         audioManager.setMicrophoneMute(false);
-        if(callStateListener!=null){
+        if (callStateListener != null) {
             EMChatManager.getInstance().removeCallStateChangeListener(callStateListener);
         }
         callHelper.setSurfaceView(null);
-        eyeSurface=null;
+        eyeSurface = null;
     }
 
     @OnClick(R.id.iv_speak)
-    void onSpeakClick(View view){
-        if(isSpeaking){
+    void onSpeakClick(View view) {
+        if (isSpeaking) {
             //静音
             audioManager.setMicrophoneMute(true);
             isSpeaking = false;
-        }else {
+        } else {
             //说话
-            audioManager.setMicrophoneMute(true);
+            audioManager.setMicrophoneMute(false);
             isSpeaking = true;
         }
     }
 
     @OnClick(R.id.btn_over)
-    void onOverClick(View view){
+    void onOverClick(View view) {
         btnOver.setEnabled(false);
         EMChatManager.getInstance().endCall();
         finish();
     }
 
-    /**设置状态监听*/
+    /**
+     * 设置状态监听
+     */
     private void setCallStateListener() {
-        callStateListener=new EMCallStateChangeListener() {
+        callStateListener = new EMCallStateChangeListener() {
             @Override
             public void onCallStateChanged(CallState callState, final CallError callError) {
-                switch (callState){
+                switch (callState) {
                     case CONNECTING:
                         //正在连接对方
                         runOnUiThread(new Runnable() {
@@ -138,6 +148,9 @@ public class VideoActivity extends BaseActivity {
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
+                                //默认静音
+                                audioManager.setMicrophoneMute(true);
+                                isSpeaking = false;
                                 openSpeakerOn();
                                 tvConnectStatus.setVisibility(View.INVISIBLE);
                             }
@@ -149,7 +162,7 @@ public class VideoActivity extends BaseActivity {
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                switch (error){
+                                switch (error) {
                                     case REJECTED:
                                         tvConnectStatus.setText(R.string.refused);
                                         break;
@@ -161,6 +174,20 @@ public class VideoActivity extends BaseActivity {
                                         break;
                                     case ERROR_BUSY:
                                         tvConnectStatus.setText(R.string.busy);
+                                        //发送指令让终端结束当前通话
+                                        CommendUtil.sendCommendEndCall(eyeName, CommendUtil.COMMEND_END_CALL);
+                                        //延迟1秒钟重新连接
+                                        tvConnectStatus.postDelayed(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                try {
+                                                    EMChatManager.getInstance().makeVideoCall(eyeName);
+                                                } catch (EMServiceNotReadyException e) {
+                                                    e.printStackTrace();
+                                                }
+                                            }
+                                        }, 1*1000);
+
                                         break;
                                     case ERROR_NORESPONSE:
                                         tvConnectStatus.setText(R.string.not_answer);
@@ -177,7 +204,11 @@ public class VideoActivity extends BaseActivity {
         EMChatManager.getInstance().addVoiceCallStateChangeListener(callStateListener);
     }
 
-    /**打开扬声器*/
+
+
+    /**
+     * 打开扬声器
+     */
     protected void openSpeakerOn() {
         try {
             if (!audioManager.isSpeakerphoneOn())
@@ -188,7 +219,7 @@ public class VideoActivity extends BaseActivity {
         }
     }
 
-    class EyeCallBack implements SurfaceHolder.Callback{
+    class EyeCallBack implements SurfaceHolder.Callback {
 
         @Override
         public void surfaceCreated(SurfaceHolder holder) {
@@ -203,7 +234,7 @@ public class VideoActivity extends BaseActivity {
                     // 拨打视频通话
                     EMChatManager.getInstance().makeVideoCall(eyeName);
                     // 通知cameraHelper可以写入数据
-                    isStarted=true;
+                    isStarted = true;
                 } catch (EMServiceNotReadyException e) {
                     Snackbar.make(VideoActivity.this.getWindow().getDecorView(), R.string.connect_fail, Snackbar.LENGTH_LONG).show();
                 }
