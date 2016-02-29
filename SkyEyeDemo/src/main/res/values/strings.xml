@@ -23,4 +23,6 @@
     <string name="peer_offline">该终端未联网</string>
     <string name="busy">该终端网络繁忙,正在尝试重连</string>
     <string name="not_answer">该终端未响应</string>
+    <string name="node_using">该终端正在远程操控，无法退出</string>
+    <string name="press_exit">再按一次退出程序</string>
 </resources>

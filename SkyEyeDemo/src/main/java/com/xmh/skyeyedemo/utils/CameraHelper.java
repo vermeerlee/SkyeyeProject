@@ -46,12 +46,13 @@ public class CameraHelper implements Camera.PreviewCallback {
             wh = srcWidth * srcHeight;
             uvHeight = srcHeight >> 1;//uvHeight = height / 2
         }
-        //旋转Y
+        //旋转Y:dst[i*srcHeight+j]=src[j*srcHeight+i]
         int k = 0;
         for(int i = 0; i < srcWidth; i++) {
             int nPos = 0;
             for(int j = 0; j < srcHeight; j++) {
-                dst[k] = src[nPos + i];
+//                dst[k] = src[nPos + i];
+                dst[i*srcHeight+j]=src[j*srcWidth+i];
                 k++;
                 nPos += srcWidth;
             }
@@ -161,6 +162,36 @@ public class CameraHelper implements Camera.PreviewCallback {
         return;
     }
 
+    void YUV420spRotate90Back(byte[]  dst, byte[] src, int srcWidth, int srcHeight) {
+        int nWidth = 0, nHeight = 0;
+        int wh = 0;
+        int uvHeight = 0;
+        if(srcWidth != nWidth || srcHeight != nHeight) {
+            nWidth = srcWidth;
+            nHeight = srcHeight;
+            wh = srcWidth * srcHeight;
+            uvHeight = srcHeight >> 1;//uvHeight = height / 2
+        }
+        //旋转Y
+        for(int i = 0; i < srcWidth; i++) {
+            for(int j = 0; j < srcHeight; j++) {
+                dst[i*srcHeight+j]=src[j*srcWidth+i];
+            }
+        }
+
+        int k = 0;
+        for(int i = 0; i < srcWidth; i+=2){
+            int nPos = wh;
+            for(int j = 0; j < uvHeight; j++) {
+                dst[k] = src[nPos + i];
+                dst[k + 1] = src[nPos + i + 1];
+                k += 2;
+                nPos += srcWidth;
+            }
+        }
+        return;
+    }
+
     /**
      * 开启相机拍摄
      */
@@ -193,14 +224,24 @@ public class CameraHelper implements Camera.PreviewCallback {
             mCamera.stopPreview();
             mParameters = mCamera.getParameters();
             //region 调整本地显示方向
-            if (isScreenOriatationPortrait()) {
-                if(cameraInfo.orientation == 270 || cameraInfo.orientation == 0)
-                    mCamera.setDisplayOrientation(90);
-                if(cameraInfo.orientation == 90)
-                    mCamera.setDisplayOrientation(90);
-            }else{
-                if(cameraInfo.orientation == 90)
-                    mCamera.setDisplayOrientation(180);
+            if(cameraInfo.facing== Camera.CameraInfo.CAMERA_FACING_FRONT) {
+                if (isScreenOriatationPortrait()) {
+                    if (cameraInfo.orientation == 270)
+                        mCamera.setDisplayOrientation(90);
+                    if (cameraInfo.orientation == 90)
+                        mCamera.setDisplayOrientation(270);
+                } else {
+                    if (cameraInfo.orientation == 90)
+                        mCamera.setDisplayOrientation(180);
+                }
+            }else if(cameraInfo.facing== Camera.CameraInfo.CAMERA_FACING_BACK){
+                if(isScreenOriatationPortrait()){
+                    if(cameraInfo.orientation==90){
+                        mCamera.setDisplayOrientation(90);
+                    }
+                }else {
+
+                }
             }
             //endregion
 
@@ -233,26 +274,34 @@ public class CameraHelper implements Camera.PreviewCallback {
     public void onPreviewFrame(byte[] data, Camera camera) {
 
         if (startFlag == true) {
-            //region 根据屏幕方向写入及传输数据
-            if (isScreenOriatationPortrait()) {
-                if(cameraInfo.orientation == 90 || cameraInfo.orientation == 0) {
-                    YUV420spRotate90(yuv_Rotate90, yuv_frame, mwidth, mheight);
-                }else if(cameraInfo.orientation == 270)
-                    YUV420spRotate270(yuv_Rotate90, yuv_frame, mwidth, mheight);
-                mCallHelper.processPreviewData(mheight, mwidth, yuv_Rotate90);
-            } else {
-                if(cameraInfo.orientation == 90 || cameraInfo.orientation == 0)
-                {
-                    YUV420spRotate180(yuv_Rotate90, yuv_frame, mwidth, mheight);
-                    YUV42left2right(yuv_frame, yuv_Rotate90, mwidth, mheight);
-                    mCallHelper.processPreviewData(mheight, mwidth, yuv_frame);
-                }
-                else
-                {
-                    YUV42left2right(yuv_Rotate90, yuv_frame, mwidth, mheight);
+            //region 根据摄像头及屏幕方向写入及传输数据
+            if(cameraInfo.facing== Camera.CameraInfo.CAMERA_FACING_FRONT) {
+                if (isScreenOriatationPortrait()) {
+                    if (cameraInfo.orientation == 90)
+                        YUV420spRotate90(yuv_Rotate90, yuv_frame, mwidth, mheight);
+                    else if (cameraInfo.orientation == 270)
+                        YUV420spRotate270(yuv_Rotate90, yuv_frame, mwidth, mheight);
                     mCallHelper.processPreviewData(mheight, mwidth, yuv_Rotate90);
+                } else {
+                    if (cameraInfo.orientation == 90) {
+                        YUV420spRotate180(yuv_Rotate90, yuv_frame, mwidth, mheight);
+                        YUV42left2right(yuv_frame, yuv_Rotate90, mwidth, mheight);
+                        mCallHelper.processPreviewData(mheight, mwidth, yuv_frame);
+                    } else {
+                        YUV42left2right(yuv_Rotate90, yuv_frame, mwidth, mheight);
+                        mCallHelper.processPreviewData(mheight, mwidth, yuv_Rotate90);
+                    }
                 }
+            }else if(cameraInfo.facing== Camera.CameraInfo.CAMERA_FACING_BACK){
+                if(isScreenOriatationPortrait()){
+                    if(cameraInfo.orientation==90){
+                        YUV42left2right(yuv_Rotate90, yuv_frame, mwidth, mheight);
+                        YUV420spRotate90Back(yuv_frame, yuv_Rotate90, mwidth, mheight);
+                        mCallHelper.processPreviewData(mheight, mwidth, yuv_Rotate90);
+                    }
+                }else {
 
+                }
             }
             //endregion
         }

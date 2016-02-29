@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.media.AudioManager;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.SurfaceHolder;
@@ -114,9 +115,9 @@ public class WatchActivity extends BaseActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        callHelper.setSurfaceView(null);
         cameraHelper.stopCapture();
         cameraHelper = null;
+        callHelper.setSurfaceView(null);
         if (isGoing) {
             isGoing=false;
             EMChatManager.getInstance().endCall();
@@ -229,6 +230,7 @@ public class WatchActivity extends BaseActivity {
     @Override
     public void onBackPressed() {
         if (isGoing) {
+            Snackbar.make(getWindow().getDecorView(), R.string.node_using, Snackbar.LENGTH_SHORT).show();
             return;
         }
         exitApp();

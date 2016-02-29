@@ -55,7 +55,7 @@ public class BaseActivity extends AppCompatActivity {
      */
     public void exitApp() {
         if ((System.currentTimeMillis() - clickTime) > 2000) {
-            Snackbar.make(getWindow().getDecorView(), "再按一次后退键退出程序", Snackbar.LENGTH_SHORT).show();
+            Snackbar.make(getWindow().getDecorView(), R.string.press_exit, Snackbar.LENGTH_SHORT).show();
             clickTime = System.currentTimeMillis();
         } else {
             LoginUtil.logout();

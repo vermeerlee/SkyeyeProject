@@ -33,7 +33,8 @@
         </activity>
         <activity android:name=".activity.ChoseActivity">
         </activity>
-        <activity android:name=".activity.VideoActivity">
+        <activity android:name=".activity.VideoActivity"
+            android:screenOrientation="portrait">
         </activity>
         <activity android:name=".activity.LoginActivity">
             <intent-filter>

@@ -26,16 +26,11 @@ import butterknife.OnClick;
 
 public class VideoActivity extends BaseActivity {
 
-    @Bind(R.id.tv_eye_name)
-    TextView tvEyeName;
-    @Bind(R.id.tv_connect_status)
-    TextView tvConnectStatus;
-    @Bind(R.id.surface_video)
-    SurfaceView eyeSurface;
-    @Bind(R.id.iv_speak)
-    ImageView ivSpeak;
-    @Bind(R.id.btn_over)
-    Button btnOver;
+    @Bind(R.id.tv_eye_name)TextView tvEyeName;
+    @Bind(R.id.tv_connect_status)TextView tvConnectStatus;
+    @Bind(R.id.surface_video)SurfaceView eyeSurface;
+    @Bind(R.id.iv_speak)ImageView ivSpeak;
+    @Bind(R.id.btn_over)Button btnOver;
 
     private String eyeName;
     private EMVideoCallHelper callHelper;
@@ -67,6 +62,7 @@ public class VideoActivity extends BaseActivity {
 
         //显示eye图像
         callHelper = EMVideoCallHelper.getInstance();
+        callHelper.setVideoOrientation(EMVideoCallHelper.EMVideoOrientation.EMPortrait);//此处注意与ManiFest屏幕方向一致
         callHelper.setSurfaceView(eyeSurface);
         eyeSurface.getHolder().addCallback(new EyeCallBack());
 
@@ -74,8 +70,6 @@ public class VideoActivity extends BaseActivity {
         setCallStateListener();
 
         tvConnectStatus.setText(R.string.connecting);
-
-
     }
 
     @Override
