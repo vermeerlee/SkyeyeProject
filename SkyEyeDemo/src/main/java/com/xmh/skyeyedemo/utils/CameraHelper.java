@@ -51,8 +51,8 @@ public class CameraHelper implements Camera.PreviewCallback {
         for(int i = 0; i < srcWidth; i++) {
             int nPos = 0;
             for(int j = 0; j < srcHeight; j++) {
-//                dst[k] = src[nPos + i];
-                dst[i*srcHeight+j]=src[j*srcWidth+i];
+                dst[k] = src[nPos + i];
+//                dst[i*srcHeight+j]=src[j*srcWidth+i];
                 k++;
                 nPos += srcWidth;
             }
@@ -162,32 +162,38 @@ public class CameraHelper implements Camera.PreviewCallback {
         return;
     }
 
-    void YUV420spRotate90Back(byte[]  dst, byte[] src, int srcWidth, int srcHeight) {
-        int nWidth = 0, nHeight = 0;
+    void YUV42left2rightBack(byte[] dst, byte[] src, int srcWidth, int srcHeight) {
+        // int nWidth = 0, nHeight = 0;
         int wh = 0;
-        int uvHeight = 0;
-        if(srcWidth != nWidth || srcHeight != nHeight) {
-            nWidth = srcWidth;
-            nHeight = srcHeight;
+        int uvWidth = 0;
+        // if(srcWidth != nWidth || srcHeight != nHeight)
+        {
+            // nWidth = srcWidth;
+            // nHeight = srcHeight;
             wh = srcWidth * srcHeight;
-            uvHeight = srcHeight >> 1;//uvHeight = height / 2
-        }
-        //旋转Y
-        for(int i = 0; i < srcWidth; i++) {
-            for(int j = 0; j < srcHeight; j++) {
-                dst[i*srcHeight+j]=src[j*srcWidth+i];
-            }
+            uvWidth = srcWidth >> 1;// uvHeight = height / 2
         }
 
+        // 转换Y
         int k = 0;
-        for(int i = 0; i < srcWidth; i+=2){
-            int nPos = wh;
-            for(int j = 0; j < uvHeight; j++) {
-                dst[k] = src[nPos + i];
-                dst[k + 1] = src[nPos + i + 1];
-                k += 2;
-                nPos += srcWidth;
+        int nPos = 0;
+        for (int i = 0; i < srcWidth; i++) {
+            nPos += srcHeight;
+            for (int j = 0; j < srcHeight; j++) {
+                dst[k] = src[nPos - j - 1];
+                k++;
             }
+
+        }
+        nPos = wh + srcHeight - 1;
+        for (int i = 0; i < uvWidth; i++) {
+            for (int j = 0; j < srcHeight; j += 2) {
+                dst[k] = src[nPos - j - 1];
+                dst[k + 1] = src[nPos - j];
+                k += 2;
+
+            }
+            nPos += srcHeight;
         }
         return;
     }
@@ -294,10 +300,10 @@ public class CameraHelper implements Camera.PreviewCallback {
                 }
             }else if(cameraInfo.facing== Camera.CameraInfo.CAMERA_FACING_BACK){
                 if(isScreenOriatationPortrait()){
-                    if(cameraInfo.orientation==90){
-                        YUV42left2right(yuv_Rotate90, yuv_frame, mwidth, mheight);
-                        YUV420spRotate90Back(yuv_frame, yuv_Rotate90, mwidth, mheight);
-                        mCallHelper.processPreviewData(mheight, mwidth, yuv_Rotate90);
+                    if(cameraInfo.orientation == 90) {
+                        YUV420spRotate90(yuv_Rotate90, yuv_frame, mwidth, mheight);
+                        YUV42left2rightBack(yuv_frame, yuv_Rotate90, mwidth, mheight);
+                        mCallHelper.processPreviewData(mheight, mwidth, yuv_frame);
                     }
                 }else {
 
