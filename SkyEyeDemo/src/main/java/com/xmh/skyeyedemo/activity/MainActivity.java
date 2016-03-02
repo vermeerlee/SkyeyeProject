@@ -9,7 +9,6 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 
 import com.easemob.EMCallBack;
 import com.easemob.EMConnectionListener;
@@ -19,11 +18,12 @@ import com.easemob.chat.EMChat;
 import com.easemob.chat.EMChatManager;
 import com.easemob.chat.EMContactManager;
 import com.easemob.exceptions.EaseMobException;
-import com.xmh.skyeyedemo.adapter.EyeListAdapter;
 import com.xmh.skyeyedemo.R;
+import com.xmh.skyeyedemo.adapter.EyeListAdapter;
 import com.xmh.skyeyedemo.application.AppConfig;
 import com.xmh.skyeyedemo.base.BaseActivity;
 import com.xmh.skyeyedemo.utils.ContactUtil;
+import com.xmh.skyeyedemo.utils.LogUtil;
 import com.xmh.skyeyedemo.utils.LoginUtil;
 
 import java.util.List;
@@ -47,7 +47,7 @@ public class MainActivity extends BaseActivity implements EMEventListener {
         LoginUtil.relogin(AppConfig.getUsername() + LoginUtil.USERNAME_HEADEND, new EMCallBack() {
             @Override
             public void onSuccess() {
-                Log.e("xmh-login", "head");
+                LogUtil.e("xmh-login", "head");
                 initAfterLogin();
             }
 
@@ -130,7 +130,7 @@ public class MainActivity extends BaseActivity implements EMEventListener {
 
     @Override
     public void onEvent(EMNotifierEvent emNotifierEvent) {
-        Log.e("xmh", "event");
+        LogUtil.e("xmh-event", "event:"+emNotifierEvent.getEvent());
     }
 
     @Override

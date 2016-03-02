@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.support.v4.content.LocalBroadcastManager;
 import android.text.TextUtils;
-import android.util.Log;
 
 import com.easemob.chat.EMChatManager;
 import com.easemob.chat.EMContactListener;
@@ -57,7 +56,6 @@ public class ContactUtil {
 
             @Override
             public void onContactInvited(final String username, String reason) {
-                Log.e("xmh-head-contact-invite","rec-"+username);
                 //收到好友邀请
                 if(TextUtils.isEmpty(reason)){
                     return;

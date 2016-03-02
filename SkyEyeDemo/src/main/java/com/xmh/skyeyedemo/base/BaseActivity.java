@@ -16,6 +16,7 @@ import com.easemob.chat.EMChatManager;
 import com.easemob.util.NetUtils;
 import com.xmh.skyeyedemo.R;
 import com.xmh.skyeyedemo.activity.LoginActivity;
+import com.xmh.skyeyedemo.utils.LogUtil;
 import com.xmh.skyeyedemo.utils.LoginUtil;
 
 /**
@@ -68,7 +69,7 @@ public class BaseActivity extends AppCompatActivity {
         @Override
         public void onConnected() {
             //已连接到服务器
-            Log.e("xmh-connected", "connected");
+            LogUtil.e("xmh-connected", "connected");
         }
         @Override
         public void onDisconnected(final int error) {

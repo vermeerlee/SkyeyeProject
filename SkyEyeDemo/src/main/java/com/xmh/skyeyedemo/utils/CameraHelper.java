@@ -4,8 +4,11 @@ import android.content.Context;
 import android.content.res.Configuration;
 import android.graphics.ImageFormat;
 import android.hardware.Camera;
+import android.media.CamcorderProfile;
 import android.media.MediaRecorder;
 import android.os.Build;
+import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
 import android.view.SurfaceHolder;
 
@@ -15,6 +18,9 @@ import com.easemob.chat.EMVideoCallHelper;
  * Created by xmh19 on 2016/2/27 027.
  */
 public class CameraHelper implements Camera.PreviewCallback {
+
+    private static final int MESSAGE_RE_RECORD = 10001;
+    private static final int RE_RECORD_DELAY = 60 * 1000;
 
     static final int mwidth = 320;
     static final int mheight = 240;
@@ -29,19 +35,42 @@ public class CameraHelper implements Camera.PreviewCallback {
     private Camera.Parameters mParameters;
     private byte[] yuv_frame;
     private byte[] yuv_Rotate90;
+    private MediaRecorder mediaRecorder;
+    private boolean isRecording = false;
 
-    public CameraHelper(Context context,EMVideoCallHelper callHelper, SurfaceHolder holder){
-        this.mContext=context;
-        this.mCallHelper=callHelper;
-        this.mSurfaceHolder=holder;
+    private Handler workHandler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            switch (msg.what) {
+                case MESSAGE_RE_RECORD:
+                    if (isRecording) {
+                        stopVideoRecord();
+                        startVideoRecord();
+                        //延迟在发送，循环走起
+                        workHandler.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                workHandler.sendEmptyMessage(MESSAGE_RE_RECORD);
+                            }
+                        }, RE_RECORD_DELAY);
+                    }
+                    break;
+            }
+        }
+    };
 
+    public CameraHelper(Context context, EMVideoCallHelper callHelper, SurfaceHolder holder) {
+        this.mContext = context;
+        this.mCallHelper = callHelper;
+        this.mSurfaceHolder = holder;
     }
 
-    void YUV420spRotate90(byte[]  dst, byte[] src, int srcWidth, int srcHeight) {
+    void YUV420spRotate90(byte[] dst, byte[] src, int srcWidth, int srcHeight) {
         int nWidth = 0, nHeight = 0;
         int wh = 0;
         int uvHeight = 0;
-        if(srcWidth != nWidth || srcHeight != nHeight) {
+        if (srcWidth != nWidth || srcHeight != nHeight) {
             nWidth = srcWidth;
             nHeight = srcHeight;
             wh = srcWidth * srcHeight;
@@ -49,9 +78,9 @@ public class CameraHelper implements Camera.PreviewCallback {
         }
         //旋转Y:dst[i*srcHeight+j]=src[j*srcHeight+i]
         int k = 0;
-        for(int i = 0; i < srcWidth; i++) {
+        for (int i = 0; i < srcWidth; i++) {
             int nPos = 0;
-            for(int j = 0; j < srcHeight; j++) {
+            for (int j = 0; j < srcHeight; j++) {
                 dst[k] = src[nPos + i];
 //                dst[i*srcHeight+j]=src[j*srcWidth+i];
                 k++;
@@ -59,9 +88,9 @@ public class CameraHelper implements Camera.PreviewCallback {
             }
         }
 
-        for(int i = 0; i < srcWidth; i+=2){
+        for (int i = 0; i < srcWidth; i += 2) {
             int nPos = wh;
-            for(int j = 0; j < uvHeight; j++) {
+            for (int j = 0; j < uvHeight; j++) {
                 dst[k] = src[nPos + i];
                 dst[k + 1] = src[nPos + i + 1];
                 k += 2;
@@ -71,33 +100,33 @@ public class CameraHelper implements Camera.PreviewCallback {
         return;
     }
 
-    void YUV420spRotate180(byte[]  dst, byte[] src, int srcWidth, int srcHeight) {
+    void YUV420spRotate180(byte[] dst, byte[] src, int srcWidth, int srcHeight) {
         int nWidth = 0, nHeight = 0;
         int wh = 0;
         int uvsize = 0;
         int uvHeight = 0;
-        if(srcWidth != nWidth || srcHeight != nHeight)  {
+        if (srcWidth != nWidth || srcHeight != nHeight) {
             nWidth = srcWidth;
             nHeight = srcHeight;
             wh = srcWidth * srcHeight;
             uvHeight = srcHeight >> 1;//uvHeight = height / 2
         }
-        uvsize = wh>>1;
-        for(int i = 0;i<wh;i++){
-            dst[wh-1-i]=src[i];
+        uvsize = wh >> 1;
+        for (int i = 0; i < wh; i++) {
+            dst[wh - 1 - i] = src[i];
         }
-        for(int i = 0;i<uvsize;i+=2){
-            dst[wh+uvsize-2-i]= src[wh+i];
-            dst[wh+uvsize-1-i]= src[wh+i+1];
+        for (int i = 0; i < uvsize; i += 2) {
+            dst[wh + uvsize - 2 - i] = src[wh + i];
+            dst[wh + uvsize - 1 - i] = src[wh + i + 1];
         }
         return;
     }
 
-    void YUV420spRotate270(byte[]  dst, byte[] src, int srcWidth, int srcHeight) {
+    void YUV420spRotate270(byte[] dst, byte[] src, int srcWidth, int srcHeight) {
         int nWidth = 0, nHeight = 0;
         int wh = 0;
         int uvHeight = 0;
-        if(srcWidth != nWidth || srcHeight != nHeight){
+        if (srcWidth != nWidth || srcHeight != nHeight) {
             nWidth = srcWidth;
             nHeight = srcHeight;
             wh = srcWidth * srcHeight;
@@ -105,19 +134,18 @@ public class CameraHelper implements Camera.PreviewCallback {
         }
 
         int k = 0;
-        for(int i = 0; i < srcWidth; i++){
+        for (int i = 0; i < srcWidth; i++) {
             int nPos = srcWidth - 1;
-            for(int j = 0; j < srcHeight; j++)
-            {
+            for (int j = 0; j < srcHeight; j++) {
                 dst[k] = src[nPos - i];
                 k++;
                 nPos += srcWidth;
             }
         }
 
-        for(int i = 0; i < srcWidth; i+=2){
+        for (int i = 0; i < srcWidth; i += 2) {
             int nPos = wh + srcWidth - 1;
-            for(int j = 0; j < uvHeight; j++) {
+            for (int j = 0; j < uvHeight; j++) {
                 dst[k] = src[nPos - i - 1];
                 dst[k + 1] = src[nPos - i];
                 k += 2;
@@ -163,7 +191,9 @@ public class CameraHelper implements Camera.PreviewCallback {
         return;
     }
 
-    /**用于后置摄像头的左右翻转*/
+    /**
+     * 用于后置摄像头的左右翻转
+     */
     void YUV42left2rightBack(byte[] dst, byte[] src, int srcWidth, int srcHeight) {
         // int nWidth = 0, nHeight = 0;
         int wh = 0;
@@ -203,26 +233,23 @@ public class CameraHelper implements Camera.PreviewCallback {
     /**
      * 开启相机拍摄
      */
-    public void startCapture(){
+    public void startCapture() {
         try {
             cameraInfo = new Camera.CameraInfo();
             if (mCamera == null) {
                 camera_count = Camera.getNumberOfCameras();
-                Log.e("xmh-camera", "camera count:" + camera_count);
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD) {
                     for (int i = 0; i < camera_count; i++) {
                         Camera.CameraInfo info = new Camera.CameraInfo();
                         Camera.getCameraInfo(i, info);
                         // find front camera
                         if (info.facing == Camera.CameraInfo.CAMERA_FACING_BACK) {
-                            Log.e("xmh-camera", "to open back camera");
                             mCamera = Camera.open(i);
                             Camera.getCameraInfo(i, cameraInfo);
                         }
                     }
                 }
                 if (mCamera == null) {
-                    Log.e("xmh-camera", "AAAAA OPEN camera");
                     mCamera = Camera.open();
                     Camera.getCameraInfo(0, cameraInfo);
                 }
@@ -232,7 +259,7 @@ public class CameraHelper implements Camera.PreviewCallback {
             mCamera.stopPreview();
             mParameters = mCamera.getParameters();
             //region 调整本地显示方向
-            if(cameraInfo.facing== Camera.CameraInfo.CAMERA_FACING_FRONT) {
+            if (cameraInfo.facing == Camera.CameraInfo.CAMERA_FACING_FRONT) {
                 if (isScreenOriatationPortrait()) {
                     if (cameraInfo.orientation == 270)
                         mCamera.setDisplayOrientation(90);
@@ -242,12 +269,12 @@ public class CameraHelper implements Camera.PreviewCallback {
                     if (cameraInfo.orientation == 90)
                         mCamera.setDisplayOrientation(180);
                 }
-            }else if(cameraInfo.facing== Camera.CameraInfo.CAMERA_FACING_BACK){
-                if(isScreenOriatationPortrait()){
-                    if(cameraInfo.orientation==90){
+            } else if (cameraInfo.facing == Camera.CameraInfo.CAMERA_FACING_BACK) {
+                if (isScreenOriatationPortrait()) {
+                    if (cameraInfo.orientation == 90) {
                         mCamera.setDisplayOrientation(90);
                     }
-                }else {
+                } else {
 
                 }
             }
@@ -258,7 +285,7 @@ public class CameraHelper implements Camera.PreviewCallback {
             mCamera.setParameters(mParameters);
             int mformat = mParameters.getPreviewFormat();
             int bitsperpixel = ImageFormat.getBitsPerPixel(mformat);
-            Log.e("xmh-camera", "pzy bitsperpixel: " + bitsperpixel);
+            LogUtil.e("xmh-camera", "pzy bitsperpixel: " + bitsperpixel);
             yuv_frame = new byte[mwidth * mheight * bitsperpixel / 8];
             yuv_Rotate90 = new byte[mwidth * mheight * bitsperpixel / 8];
 //            yuv_Rotate90lr = new byte[mwidth * mheight * bitsperpixel / 8];
@@ -270,31 +297,73 @@ public class CameraHelper implements Camera.PreviewCallback {
             EMVideoCallHelper.getInstance().setResolution(mwidth, mheight);
 
             mCamera.startPreview();
-            Log.d("xmh-camera", "camera start preview");
+            //region 开始record
             startVideoRecord();
+            isRecording = true;
+            workHandler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    workHandler.sendEmptyMessage(MESSAGE_RE_RECORD);
+                }
+            }, RE_RECORD_DELAY);//每分钟保存一个文件(延迟1分钟再发，发完就另存为了)
+            //endregion
         } catch (Exception e) {
             e.printStackTrace();
-            if(mCamera != null)
-                mCamera.release();
+            releaseMediaRecorder();
+            releaseCamera();
         }
     }
 
-    /**开始录像*/
-    private void startVideoRecord(){
-        //解锁camera
-        mCamera.unlock();
-        //初始化MediaRecorder
-        MediaRecorder mediaRecorder = new MediaRecorder();
-        mediaRecorder.setCamera(mCamera);
-        mediaRecorder.setAudioSource(MediaRecorder.AudioSource.CAMCORDER);
-        mediaRecorder.setVideoSource(MediaRecorder.VideoSource.CAMERA);
-        //设置编码格式
-        mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
-        mediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
-        mediaRecorder.setVideoEncoder(MediaRecorder.VideoEncoder.MPEG_4_SP);
-        //设置输出文件
-        mediaRecorder.setOutputFile(FileUtil.getVideoFileFullName());
-        //TODO record
+    /**
+     * 开始录像
+     */
+    private void startVideoRecord() {
+        try {
+            //解锁camera
+            mCamera.unlock();
+            //初始化MediaRecorder
+            mediaRecorder = new MediaRecorder();
+            //region 此处顺序不能变
+            mediaRecorder.setCamera(mCamera);
+            mediaRecorder.setAudioSource(MediaRecorder.AudioSource.CAMCORDER);
+            mediaRecorder.setVideoSource(MediaRecorder.VideoSource.CAMERA);
+            //设置编码格式(API8及以上用第一行，否则用下三行)
+            mediaRecorder.setProfile(CamcorderProfile.get(CamcorderProfile.QUALITY_480P));//TODO 选择合适质量
+//        mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
+//        mediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
+//        mediaRecorder.setVideoEncoder(MediaRecorder.VideoEncoder.MPEG_4_SP);
+            //设置输出文件
+            mediaRecorder.setOutputFile(FileUtil.getVideoFileFullName());
+            //设置预览
+            mediaRecorder.setPreviewDisplay(mSurfaceHolder.getSurface());
+            //endregion
+            //准备record
+            mediaRecorder.prepare();
+            mediaRecorder.start();
+            Log.d("xmh-camera", "camera start record");
+        } catch (Exception e) {
+            e.printStackTrace();
+            releaseMediaRecorder();
+            releaseCamera();
+        }
+    }
+
+    /**
+     * 结束录像
+     */
+    private void stopVideoRecord() {
+        if (mediaRecorder != null) {
+            //按顺序
+            try {
+                mediaRecorder.stop();
+            }catch (Exception e){
+                e.printStackTrace();
+                releaseMediaRecorder();
+                releaseCamera();
+            }
+            mCamera.lock();
+            Log.d("xmh-camera", "camera finish record");
+        }
     }
 
     @Override
@@ -302,7 +371,7 @@ public class CameraHelper implements Camera.PreviewCallback {
 
         if (startFlag == true) {
             //region 根据摄像头及屏幕方向写入及传输数据
-            if(cameraInfo.facing== Camera.CameraInfo.CAMERA_FACING_FRONT) {
+            if (cameraInfo.facing == Camera.CameraInfo.CAMERA_FACING_FRONT) {
                 if (isScreenOriatationPortrait()) {
                     if (cameraInfo.orientation == 90)
                         YUV420spRotate90(yuv_Rotate90, yuv_frame, mwidth, mheight);
@@ -319,14 +388,14 @@ public class CameraHelper implements Camera.PreviewCallback {
                         mCallHelper.processPreviewData(mheight, mwidth, yuv_Rotate90);
                     }
                 }
-            }else if(cameraInfo.facing== Camera.CameraInfo.CAMERA_FACING_BACK){
-                if(isScreenOriatationPortrait()){
-                    if(cameraInfo.orientation == 90) {
+            } else if (cameraInfo.facing == Camera.CameraInfo.CAMERA_FACING_BACK) {
+                if (isScreenOriatationPortrait()) {
+                    if (cameraInfo.orientation == 90) {
                         YUV420spRotate90(yuv_Rotate90, yuv_frame, mwidth, mheight);
                         YUV42left2rightBack(yuv_frame, yuv_Rotate90, mwidth, mheight);
                         mCallHelper.processPreviewData(mheight, mwidth, yuv_frame);
                     }
-                }else {
+                } else {
 
                 }
             }
@@ -345,6 +414,8 @@ public class CameraHelper implements Camera.PreviewCallback {
      */
     public void stopCapture() {
 
+        isRecording = false;
+        stopVideoRecord();
         startFlag = false;
         if (mCamera != null) {
             mCamera.setPreviewCallback(null);
@@ -358,4 +429,21 @@ public class CameraHelper implements Camera.PreviewCallback {
         return mContext.getApplicationContext().getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT;
     }
 
+    private void releaseMediaRecorder() {
+        isRecording=false;
+        if (mediaRecorder != null) {
+            mediaRecorder.reset();
+            mediaRecorder.release();
+            mediaRecorder = null;
+            mCamera.lock();
+        }
+    }
+
+    private void releaseCamera() {
+        isRecording=false;
+        if (mCamera != null) {
+            mCamera.release();
+            mCamera = null;
+        }
+    }
 }

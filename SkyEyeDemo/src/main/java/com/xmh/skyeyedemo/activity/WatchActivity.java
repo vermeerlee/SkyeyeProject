@@ -8,7 +8,6 @@ import android.media.AudioManager;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.LocalBroadcastManager;
-import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.WindowManager;
@@ -28,6 +27,7 @@ import com.xmh.skyeyedemo.receiver.NewMessageBroadcastReceiver;
 import com.xmh.skyeyedemo.utils.CameraHelper;
 import com.xmh.skyeyedemo.utils.CommendUtil;
 import com.xmh.skyeyedemo.utils.CommonUtil;
+import com.xmh.skyeyedemo.utils.LogUtil;
 import com.xmh.skyeyedemo.utils.LoginUtil;
 
 import java.util.List;
@@ -70,7 +70,7 @@ public class WatchActivity extends BaseActivity {
         LoginUtil.relogin(AppConfig.getUsername() + LoginUtil.USERNAME_EYE_DEPART + CommonUtil.getUUID(this), new EMCallBack() {
             @Override
             public void onSuccess() {
-                Log.e("xmh-login", "eye");
+                LogUtil.e("xmh-login", "eye");
                 initAfterLogin();
             }
 
@@ -198,7 +198,6 @@ public class WatchActivity extends BaseActivity {
                     if (usernames == null || usernames.isEmpty()) {
                         //添加head好友
                         EMContactManager.getInstance().addContact(AppConfig.getUsername() + LoginUtil.USERNAME_HEADEND, AppConfig.getUsername());//需异步处理
-                        Log.e("xmh-eye-contact", "request head");
                     }
                 } catch (EaseMobException e) {
                     e.printStackTrace();
@@ -259,7 +258,6 @@ public class WatchActivity extends BaseActivity {
      * 接听呼叫
      */
     private void answerCall() {
-        Log.e("xmh-call", "receive");
         try {
             EMChatManager.getInstance().answerCall();
             cameraHelper.setStartFlag(true);

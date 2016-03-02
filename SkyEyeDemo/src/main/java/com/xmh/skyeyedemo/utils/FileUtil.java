@@ -14,6 +14,7 @@ public class FileUtil {
 
     private static final String FILE_NAME_START = "skyeye";
     private static final String FILE_NAME_DEPART = "-";
+    private static final String FILE_NAME_END = ".mp4";
     private static final String FILE_ROOT_PATH = "/skyeye/";
     private static final String VIDEO_FILE_PATH = "videofile/";
     private static final String NOMEDIA_FILENAME=".nomedia";
@@ -36,7 +37,7 @@ public class FileUtil {
      * 获取SD卡上的video存储路径
      */
     public static String getVideoFilePathOnSD() {
-        return Environment.getExternalStorageState() + FILE_ROOT_PATH + VIDEO_FILE_PATH;
+        return Environment.getExternalStorageDirectory() + FILE_ROOT_PATH + VIDEO_FILE_PATH;
     }
 
     /**
@@ -50,23 +51,27 @@ public class FileUtil {
      * 根据时间生成video文件名
      */
     public static String generateFileNameByDateTime() {
-        StringBuilder stringBuilder = new StringBuilder(FILE_NAME_START).append(FILE_NAME_DEPART)
+        StringBuilder stringBuilder = new StringBuilder()
                 .append("yyyy").append(FILE_NAME_DEPART)
                 .append("MM").append(FILE_NAME_DEPART)
                 .append("dd").append(FILE_NAME_DEPART)
                 .append("HH").append(FILE_NAME_DEPART)
                 .append("mm").append(FILE_NAME_DEPART)
-                .append("ss").append(FILE_NAME_DEPART);
-        return new SimpleDateFormat(stringBuilder.toString()).format(new Date());
+                .append("ss");
+        String result = new SimpleDateFormat(stringBuilder.toString()).format(new Date());
+        return FILE_NAME_START+FILE_NAME_DEPART+result+FILE_NAME_END;
     }
 
     public static String getVideoFileFullName() {
         String fullFilename=null;
         try {
+            File folder=new File(getVideoFilePath());
+            if(!folder.exists()){
+                folder.mkdirs();
+            }
             fullFilename = getVideoFilePath() + generateFileNameByDateTime();
             File file = new File(fullFilename);
             if (!file.exists()) {
-                file.mkdirs();
                 file.createNewFile();
                 new Thread(new Runnable() {
                     @Override
@@ -97,4 +102,5 @@ public class FileUtil {
             e.printStackTrace();
         }
     }
+
 }

@@ -8,6 +8,7 @@ public class AppConfig {
     private static int UserMode=-1;
     public static final int USER_MODE_HEAD=1;
     public static final int USER_MODE_EYE=2;
+    public static boolean DEBUG=true;
 
     public static void setUserMode(int mode){
         UserMode=mode;

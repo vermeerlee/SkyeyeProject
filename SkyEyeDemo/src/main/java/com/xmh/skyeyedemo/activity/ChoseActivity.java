@@ -33,7 +33,6 @@ public class ChoseActivity extends BaseActivity {
     @OnClick(R.id.btn_eye)
     void onEyeClick(View eye){
         AppConfig.setUserMode(AppConfig.USER_MODE_EYE);
-        Snackbar.make(getWindow().getDecorView(),"TODOing",Snackbar.LENGTH_SHORT).show();
         startActivity(new Intent(ChoseActivity.this, WatchActivity.class));
         finish();
     }

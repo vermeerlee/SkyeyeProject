@@ -45,13 +45,13 @@ public class LoginUtil {
                                 //注册失败
                                 int errorCode = e.getErrorCode();
                                 if (errorCode == EMError.NONETWORK_ERROR) {
-                                    Log.e("xmh-regist-error", "网络异常，请检查网络！");
+                                    LogUtil.e("xmh-regist-error", "网络异常，请检查网络！");
                                 } else if (errorCode == EMError.USER_ALREADY_EXISTS) {
-                                    Log.e("xmh-regist-error", "用户已存在！");
+                                    LogUtil.e("xmh-regist-error", "用户已存在！");
                                 } else if (errorCode == EMError.UNAUTHORIZED) {
-                                    Log.e("xmh-regist-error", "注册失败，无权限！");
+                                    LogUtil.e("xmh-regist-error", "注册失败，无权限！");
                                 } else {
-                                    Log.e("xmh-regist-error", "注册失败: " + e.getMessage());
+                                    LogUtil.e("xmh-regist-error", "注册失败: " + e.getMessage());
                                 }
                             }
                         }
