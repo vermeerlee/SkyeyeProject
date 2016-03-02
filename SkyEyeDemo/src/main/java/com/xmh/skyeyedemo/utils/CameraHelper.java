@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.res.Configuration;
 import android.graphics.ImageFormat;
 import android.hardware.Camera;
+import android.media.MediaRecorder;
 import android.os.Build;
 import android.util.Log;
 import android.view.SurfaceHolder;
@@ -162,6 +163,7 @@ public class CameraHelper implements Camera.PreviewCallback {
         return;
     }
 
+    /**用于后置摄像头的左右翻转*/
     void YUV42left2rightBack(byte[] dst, byte[] src, int srcWidth, int srcHeight) {
         // int nWidth = 0, nHeight = 0;
         int wh = 0;
@@ -269,11 +271,30 @@ public class CameraHelper implements Camera.PreviewCallback {
 
             mCamera.startPreview();
             Log.d("xmh-camera", "camera start preview");
+            startVideoRecord();
         } catch (Exception e) {
             e.printStackTrace();
             if(mCamera != null)
                 mCamera.release();
         }
+    }
+
+    /**开始录像*/
+    private void startVideoRecord(){
+        //解锁camera
+        mCamera.unlock();
+        //初始化MediaRecorder
+        MediaRecorder mediaRecorder = new MediaRecorder();
+        mediaRecorder.setCamera(mCamera);
+        mediaRecorder.setAudioSource(MediaRecorder.AudioSource.CAMCORDER);
+        mediaRecorder.setVideoSource(MediaRecorder.VideoSource.CAMERA);
+        //设置编码格式
+        mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
+        mediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
+        mediaRecorder.setVideoEncoder(MediaRecorder.VideoEncoder.MPEG_4_SP);
+        //设置输出文件
+        mediaRecorder.setOutputFile(FileUtil.getVideoFileFullName());
+        //TODO record
     }
 
     @Override

@@ -11,6 +11,7 @@ import com.easemob.chat.EMChat;
 import com.easemob.chat.EMChatManager;
 import com.easemob.chat.EMChatOptions;
 import com.xmh.skyeyedemo.receiver.NewMessageBroadcastReceiver;
+import com.xmh.skyeyedemo.utils.FileUtil;
 
 import java.util.Iterator;
 import java.util.List;
@@ -28,8 +29,8 @@ public class App extends Application{
         super.onCreate();
 
         initHuanXin();
-
         initReceiver();
+        FileUtil.checkAndCreateNomedia();
     }
 
     /**注册监听*/
