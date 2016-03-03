@@ -2,6 +2,8 @@ package com.xmh.skyeyedemo.utils;
 
 import android.os.Environment;
 
+import com.xmh.skyeyedemo.application.AppConfig;
+
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -59,7 +61,11 @@ public class FileUtil {
                 .append("mm").append(FILE_NAME_DEPART)
                 .append("ss");
         String result = new SimpleDateFormat(stringBuilder.toString()).format(new Date());
-        return FILE_NAME_START+FILE_NAME_DEPART+result+FILE_NAME_END;
+        stringBuilder=new StringBuilder(FILE_NAME_START).append(FILE_NAME_DEPART)
+                .append(AppConfig.getUsername()).append(FILE_NAME_DEPART)
+                .append(result).append(FILE_NAME_END);
+        //skyeye-username-yyyy-MM-dd-HH-mm-ss.mp4
+        return stringBuilder.toString();
     }
 
     public static String getVideoFileFullName() {
