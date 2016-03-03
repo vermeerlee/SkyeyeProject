@@ -328,7 +328,7 @@ public class CameraHelper implements Camera.PreviewCallback {
             mediaRecorder.setAudioSource(MediaRecorder.AudioSource.CAMCORDER);
             mediaRecorder.setVideoSource(MediaRecorder.VideoSource.CAMERA);
             //设置编码格式(API8及以上用第一行，否则用下三行)
-            mediaRecorder.setProfile(CamcorderProfile.get(CamcorderProfile.QUALITY_480P));//TODO 选择合适质量
+            mediaRecorder.setProfile(CamcorderProfile.get(CamcorderProfile.QUALITY_480P));
 //        mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
 //        mediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
 //        mediaRecorder.setVideoEncoder(MediaRecorder.VideoEncoder.MPEG_4_SP);
