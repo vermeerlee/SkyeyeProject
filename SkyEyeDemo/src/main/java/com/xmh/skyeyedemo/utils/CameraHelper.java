@@ -38,6 +38,8 @@ public class CameraHelper implements Camera.PreviewCallback {
     private MediaRecorder mediaRecorder;
     private boolean isRecording = false;
 
+    private String currentVideoFileName;
+
     private Handler workHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
@@ -230,6 +232,17 @@ public class CameraHelper implements Camera.PreviewCallback {
         return;
     }
 
+    public boolean isRecording(){
+        return isRecording;
+    }
+
+    public String getCurrentVideoFileName(){
+        if(isRecording) {
+            return currentVideoFileName;
+        }
+        return null;
+    }
+
     /**
      * 开启相机拍摄
      */
@@ -333,7 +346,8 @@ public class CameraHelper implements Camera.PreviewCallback {
 //        mediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
 //        mediaRecorder.setVideoEncoder(MediaRecorder.VideoEncoder.MPEG_4_SP);
             //设置输出文件
-            mediaRecorder.setOutputFile(FileUtil.getVideoFileFullName());
+            this.currentVideoFileName=FileUtil.getVideoFileFullName();
+            mediaRecorder.setOutputFile(currentVideoFileName);
             //设置预览
             mediaRecorder.setPreviewDisplay(mSurfaceHolder.getSurface());
             //endregion
