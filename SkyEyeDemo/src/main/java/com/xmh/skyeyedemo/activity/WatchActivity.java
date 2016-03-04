@@ -106,6 +106,7 @@ public class WatchActivity extends BaseActivity {
                 if(isGoing){
                     //结束通话
                     EMChatManager.getInstance().endCall();
+                    LogUtil.e("xmh-record", "end call",true);
                     isGoing=false;
                 }
             }
@@ -263,6 +264,7 @@ public class WatchActivity extends BaseActivity {
             cameraHelper.setStartFlag(true);
             openSpeakerOn();
             isGoing = true;
+            LogUtil.e("xmh-record","answer call",true);
         } catch (Exception e) {
             e.printStackTrace();
         }

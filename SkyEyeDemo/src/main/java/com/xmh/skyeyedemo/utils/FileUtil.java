@@ -19,7 +19,8 @@ public class FileUtil {
     private static final String FILE_NAME_END = ".mp4";
     private static final String FILE_ROOT_PATH = "/skyeye/";
     private static final String VIDEO_FILE_PATH = "videofile/";
-    private static final String NOMEDIA_FILENAME=".nomedia";
+    private static final String LOG_FILE_PATH = "logfile/";
+    private static final String NOMEDIA_FILENAME = ".nomedia";
 
     public static boolean checkSDCardAvailable() {
         return Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED);
@@ -61,7 +62,7 @@ public class FileUtil {
                 .append("mm").append(FILE_NAME_DEPART)
                 .append("ss");
         String result = new SimpleDateFormat(stringBuilder.toString()).format(new Date());
-        stringBuilder=new StringBuilder(FILE_NAME_START).append(FILE_NAME_DEPART)
+        stringBuilder = new StringBuilder(FILE_NAME_START).append(FILE_NAME_DEPART)
                 .append(AppConfig.getUsername()).append(FILE_NAME_DEPART)
                 .append(result).append(FILE_NAME_END);
         //skyeye-username-yyyy-MM-dd-HH-mm-ss.mp4
@@ -69,16 +70,17 @@ public class FileUtil {
     }
 
     public static String getVideoFileFullName() {
-        String fullFilename=null;
+        String fullFilename = null;
         try {
-            File folder=new File(getVideoFilePath());
-            if(!folder.exists()){
+            File folder = new File(getVideoFilePath());
+            if (!folder.exists()) {
                 folder.mkdirs();
             }
             fullFilename = getVideoFilePath() + generateFileNameByDateTime();
             File file = new File(fullFilename);
             if (!file.exists()) {
                 file.createNewFile();
+                LogUtil.e("xmh-record", "create file",true);
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
@@ -92,21 +94,35 @@ public class FileUtil {
         return fullFilename;
     }
 
-    public static void checkAndCreateNomedia(){
+    public static void checkAndCreateNomedia() {
         try {
             File folder = new File(getVideoFilePathOnPhone());
             if (folder.exists()) {
-                File file=new File(getVideoFilePathOnPhone()+NOMEDIA_FILENAME);
-                if(!file.exists())file.createNewFile();
+                File file = new File(getVideoFilePathOnPhone() + NOMEDIA_FILENAME);
+                if (!file.exists()) file.createNewFile();
             }
-            folder=new File(getVideoFilePathOnSD());
-            if(folder.exists()){
-                File file=new File(getVideoFilePathOnSD()+NOMEDIA_FILENAME);
-                if(!file.exists())file.createNewFile();
+            folder = new File(getVideoFilePathOnSD());
+            if (folder.exists()) {
+                File file = new File(getVideoFilePathOnSD() + NOMEDIA_FILENAME);
+                if (!file.exists()) file.createNewFile();
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public static String getLogFilePath() {
+        String path=null;
+        if (checkSDCardAvailable()) {
+            path=Environment.getExternalStorageDirectory() + FILE_ROOT_PATH + LOG_FILE_PATH;
+        }else{
+            path=Environment.getDataDirectory() + FILE_ROOT_PATH + LOG_FILE_PATH;
+        }
+        File folder = new File(path);
+        if(!folder.exists()){
+            folder.mkdirs();
+        }
+        return path;
     }
 
 }

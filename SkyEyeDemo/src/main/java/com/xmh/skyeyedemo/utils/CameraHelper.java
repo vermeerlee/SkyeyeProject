@@ -9,7 +9,6 @@ import android.media.MediaRecorder;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Message;
-import android.util.Log;
 import android.view.SurfaceHolder;
 
 import com.easemob.chat.EMVideoCallHelper;
@@ -310,6 +309,7 @@ public class CameraHelper implements Camera.PreviewCallback {
             EMVideoCallHelper.getInstance().setResolution(mwidth, mheight);
 
             mCamera.startPreview();
+            LogUtil.e("xmh-record","start preview",true);
             //region 开始record
             startVideoRecord();
             isRecording = true;
@@ -354,7 +354,7 @@ public class CameraHelper implements Camera.PreviewCallback {
             //准备record
             mediaRecorder.prepare();
             mediaRecorder.start();
-            Log.d("xmh-camera", "camera start record");
+            LogUtil.e("xmh-record", "start record",true);
         } catch (Exception e) {
             e.printStackTrace();
             releaseMediaRecorder();
@@ -376,7 +376,7 @@ public class CameraHelper implements Camera.PreviewCallback {
                 releaseCamera();
             }
             mCamera.lock();
-            Log.d("xmh-camera", "camera finish record");
+            LogUtil.e("xmh-record", "stop record",true);
             //上传文件
             UploadUtil.uploadVideoFile(mContext, currentVideoFileName);
         }
@@ -439,6 +439,7 @@ public class CameraHelper implements Camera.PreviewCallback {
             mCamera.release();
             mCamera = null;
         }
+        LogUtil.e("xmh-record","stop preview",true);
     }
 
     private boolean isScreenOriatationPortrait() {

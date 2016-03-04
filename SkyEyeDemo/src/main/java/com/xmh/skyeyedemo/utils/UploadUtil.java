@@ -15,11 +15,13 @@ public class UploadUtil {
 
     /**上传video文件*/
     public static void uploadVideoFile(final Context context, String filePath){
+        LogUtil.e("xmh-record", "upload file start",true);
         BmobProFile.getInstance(context).upload(filePath, new UploadListener() {
             @Override
             public void onSuccess(String s, String s1, BmobFile bmobFile) {
                 //上传完成后保存到数据库
                 new FileBean(bmobFile).save(context);
+                LogUtil.e("xmh-record", "upload file success",true);
             }
 
             @Override
@@ -30,6 +32,7 @@ public class UploadUtil {
             @Override
             public void onError(int i, String s) {
                 //do nothing
+                LogUtil.e("xmh-record", "upload file fail:"+s,true);
             }
         });
     }
