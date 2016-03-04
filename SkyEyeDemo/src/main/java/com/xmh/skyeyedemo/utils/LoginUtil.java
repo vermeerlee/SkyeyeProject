@@ -1,7 +1,5 @@
 package com.xmh.skyeyedemo.utils;
 
-import android.util.Log;
-
 import com.easemob.EMCallBack;
 import com.easemob.EMError;
 import com.easemob.chat.EMChatManager;

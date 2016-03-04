@@ -2,7 +2,7 @@
 ##登录管理
 
 ###账户组成
-- username:仅用于登录验证
+- username:用于登录验证,唯一标识用户
 - username_head:用于head模式登录
 - username_uuid:用于eye模式登录,uuid为设备标识
  

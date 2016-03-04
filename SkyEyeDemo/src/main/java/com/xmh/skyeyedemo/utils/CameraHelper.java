@@ -367,7 +367,7 @@ public class CameraHelper implements Camera.PreviewCallback {
      */
     private void stopVideoRecord() {
         if (mediaRecorder != null) {
-            //按顺序
+            //按顺序处理mediaRecorder
             try {
                 mediaRecorder.stop();
             }catch (Exception e){
@@ -377,6 +377,8 @@ public class CameraHelper implements Camera.PreviewCallback {
             }
             mCamera.lock();
             Log.d("xmh-camera", "camera finish record");
+            //上传文件
+            UploadUtil.uploadVideoFile(mContext, currentVideoFileName);
         }
     }
 

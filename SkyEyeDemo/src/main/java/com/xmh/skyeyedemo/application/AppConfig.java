@@ -9,6 +9,8 @@ public class AppConfig {
     public static final int USER_MODE_HEAD=1;
     public static final int USER_MODE_EYE=2;
     public static boolean DEBUG=true;
+    /**BmobAppID*/
+    public static final String Bmob_APPID="a1c7c838c77f6d8bc5fe129e4a611c31";
 
     public static void setUserMode(int mode){
         UserMode=mode;

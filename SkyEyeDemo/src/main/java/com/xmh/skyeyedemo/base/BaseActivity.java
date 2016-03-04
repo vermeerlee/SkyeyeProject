@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
@@ -16,8 +15,11 @@ import com.easemob.chat.EMChatManager;
 import com.easemob.util.NetUtils;
 import com.xmh.skyeyedemo.R;
 import com.xmh.skyeyedemo.activity.LoginActivity;
+import com.xmh.skyeyedemo.application.AppConfig;
 import com.xmh.skyeyedemo.utils.LogUtil;
 import com.xmh.skyeyedemo.utils.LoginUtil;
+
+import cn.bmob.v3.Bmob;
 
 /**
  * Created by mengh on 2016/2/22 022.
@@ -30,7 +32,7 @@ public class BaseActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        ButterKnife.bind(this);
+//        ButterKnife.bind(this);//此代码不能在基类中写
 
         //透明状态栏
 //        getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
@@ -49,6 +51,9 @@ public class BaseActivity extends AppCompatActivity {
         //endregion
         //注册一个监听连接状态的listener
         EMChatManager.getInstance().addConnectionListener(new MyConnectionListener());
+
+        //初始化Bmob
+        Bmob.initialize(this, AppConfig.Bmob_APPID);
     }
 
     /**
@@ -64,7 +69,7 @@ public class BaseActivity extends AppCompatActivity {
         }
     }
 
-    //实现ConnectionListener接口
+    /**实现ConnectionListener接口，监听断开状态*/
     private class MyConnectionListener implements EMConnectionListener {
         @Override
         public void onConnected() {
