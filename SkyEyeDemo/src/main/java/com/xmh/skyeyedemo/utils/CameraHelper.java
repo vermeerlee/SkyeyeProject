@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.res.Configuration;
 import android.graphics.ImageFormat;
 import android.hardware.Camera;
-import android.media.CamcorderProfile;
 import android.media.MediaRecorder;
 import android.os.Build;
 import android.os.Handler;
@@ -340,11 +339,11 @@ public class CameraHelper implements Camera.PreviewCallback {
             mediaRecorder.setCamera(mCamera);
             mediaRecorder.setAudioSource(MediaRecorder.AudioSource.CAMCORDER);
             mediaRecorder.setVideoSource(MediaRecorder.VideoSource.CAMERA);
-            //设置编码格式(API8及以上用第一行，否则用下三行)
-            mediaRecorder.setProfile(CamcorderProfile.get(CamcorderProfile.QUALITY_480P));
-//        mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
-//        mediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
-//        mediaRecorder.setVideoEncoder(MediaRecorder.VideoEncoder.MPEG_4_SP);
+            //设置编码格式(API8及以上用第一行，否则用下三行)（视频大小：第一行33MB/min,下三行1.28MB/min——m1_note手机）
+//            mediaRecorder.setProfile(CamcorderProfile.get(CamcorderProfile.QUALITY_480P));
+        mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
+        mediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
+        mediaRecorder.setVideoEncoder(MediaRecorder.VideoEncoder.MPEG_4_SP);
             //region设置录制方向
             if (cameraInfo.facing == Camera.CameraInfo.CAMERA_FACING_BACK) {
                 if (isScreenOriatationPortrait()) {
