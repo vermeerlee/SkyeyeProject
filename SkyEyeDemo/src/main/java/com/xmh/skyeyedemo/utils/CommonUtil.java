@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.Build;
 import android.telephony.TelephonyManager;
 import android.text.TextUtils;
 import android.view.inputmethod.InputMethodManager;
@@ -51,5 +52,10 @@ public class CommonUtil {
         uniqueId = deviceUuid.toString();
 
         return uniqueId;
+    }
+
+    /**手机名称，用于初始化nickName*/
+    public static String getPhoneName(){
+        return Build.DEVICE;
     }
 }

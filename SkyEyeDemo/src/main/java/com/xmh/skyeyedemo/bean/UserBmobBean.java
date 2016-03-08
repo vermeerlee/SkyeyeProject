@@ -14,6 +14,14 @@ public class UserBmobBean extends BmobObject{
     /**昵称，用于显示给用户*/
     private String nickName;
 
+    public UserBmobBean(){
+        //to nothing
+    }
+
+    public UserBmobBean(String fullUsername){
+        setFullUsername(fullUsername);
+    }
+
     public String getFullUsername() {
         return fullUsername;
     }

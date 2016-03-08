@@ -8,9 +8,13 @@ import android.view.ViewGroup;
 import android.widget.Button;
 
 import com.xmh.skyeyedemo.R;
+import com.xmh.skyeyedemo.bean.UserBmobBean;
+import com.xmh.skyeyedemo.utils.ContactUtil;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by mengh on 2016/2/26 026.
@@ -18,7 +22,8 @@ import java.util.List;
 public class EyeListAdapter extends RecyclerView.Adapter<EyeListAdapter.EyeViewHolder> {
 
     private Context mContext;
-    private List<String> mEyeList=new ArrayList<>();
+    private List<String> mEyeNameList =new ArrayList<>();
+    private Map<String,UserBmobBean> mEyeUserMap=new HashMap<>();
     private OnItemClickListener listener;
 
     public void setOnItemClickListener(OnItemClickListener listener){
@@ -30,11 +35,22 @@ public class EyeListAdapter extends RecyclerView.Adapter<EyeListAdapter.EyeViewH
     }
 
     public void setEyeList(List<String> list){
-        mEyeList.clear();
+        mEyeNameList.clear();
         if(list!=null&&!list.isEmpty()){
-            mEyeList.addAll(list);
+            mEyeNameList.addAll(list);
         }
         notifyDataSetChanged();
+        //region 根据用户名获取用户完整信息
+        for(final String name: mEyeNameList){
+            ContactUtil.pullContactInfoWithUsername(mContext, name, new ContactUtil.OnGetUserInfoListener() {
+                @Override
+                public void onGetUserInfo(UserBmobBean userBmobBean) {
+                    mEyeUserMap.put(name,userBmobBean);
+                    notifyDataSetChanged();
+                }
+            });
+        }
+        //endregion
     }
 
     @Override
@@ -44,14 +60,17 @@ public class EyeListAdapter extends RecyclerView.Adapter<EyeListAdapter.EyeViewH
     }
 
     @Override
-    public void onBindViewHolder(EyeViewHolder holder, final int position) {
-        holder.btnEyeName.setText(mEyeList.get(position));
-        //TODO 添加点击事件，点击时开启视频请求
+    public void onBindViewHolder(EyeViewHolder holder, int position) {
+        final String username = mEyeNameList.get(position);
+        if(mEyeUserMap.get(username)!=null){
+            holder.btnEyeName.setText(mEyeUserMap.get(username).getNickName());
+        }
+        //点击开启视频请求
         holder.btnEyeName.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (listener!=null){
-                    listener.onClick(mEyeList.get(position));
+                    listener.onClick(username);
                 }
             }
         });
@@ -59,7 +78,7 @@ public class EyeListAdapter extends RecyclerView.Adapter<EyeListAdapter.EyeViewH
 
     @Override
     public int getItemCount() {
-        return mEyeList.size();
+        return mEyeNameList.size();
     }
 
     class EyeViewHolder extends RecyclerView.ViewHolder{

@@ -69,6 +69,7 @@ public class LoginUtil {
                                 //region 保存用户信息到Bmob
                                 UserBmobBean userBmobBean = new UserBmobBean();
                                 userBmobBean.setFullUsername(username);
+                                userBmobBean.setNickName(CommonUtil.getPhoneName());
                                 userBmobBean.save(App.getContext());
                                 //endregion
                             } catch (EaseMobException e) {

@@ -10,9 +10,13 @@ import com.easemob.chat.EMContactListener;
 import com.easemob.chat.EMContactManager;
 import com.easemob.exceptions.EaseMobException;
 import com.xmh.skyeyedemo.application.AppConfig;
+import com.xmh.skyeyedemo.bean.UserBmobBean;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import cn.bmob.v3.BmobQuery;
+import cn.bmob.v3.listener.FindListener;
 
 /**
  * Created by mengh on 2016/2/24 024.
@@ -57,14 +61,14 @@ public class ContactUtil {
             @Override
             public void onContactInvited(final String username, String reason) {
                 //收到好友邀请
-                if(TextUtils.isEmpty(reason)){
+                if (TextUtils.isEmpty(reason)) {
                     return;
                 }
                 //如果前缀不一致
-                if(!AppConfig.getUsername().equals(reason)){
+                if (!AppConfig.getUsername().equals(reason)) {
                     return;
                 }
-                if(!username.startsWith(AppConfig.getUsername())){
+                if (!username.startsWith(AppConfig.getUsername())) {
                     return;
                 }
                 //满足条件则同意添加好友
@@ -97,5 +101,30 @@ public class ContactUtil {
                 //增加了联系人时回调此方法
             }
         });
+    }
+
+    public static void pullContactInfoWithUsername(Context context, final String username, final OnGetUserInfoListener listener){
+        BmobQuery<UserBmobBean> query = new BmobQuery<UserBmobBean>();
+        //查询fullUsername叫“username”的数据
+        query.addWhereEqualTo("fullUsername", username);
+        //只要1条数据，如果不加上这条语句，默认返回10条数据
+        query.setLimit(1);
+        //执行查询方法
+        query.findObjects(context, new FindListener<UserBmobBean>() {
+            @Override
+            public void onSuccess(List<UserBmobBean> list) {
+                if(list!=null&&!list.isEmpty()){
+                    listener.onGetUserInfo(list.get(0));
+                }
+            }
+
+            @Override
+            public void onError(int code, String msg) {
+            }
+        });
+    }
+
+    public interface OnGetUserInfoListener{
+        void onGetUserInfo(UserBmobBean userBmobBean);
     }
 }
