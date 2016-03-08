@@ -21,6 +21,10 @@ public class AppConfig {
     //endregion
 
     //region user info
+    /**此fullUsername为eye模式下带uuid的用户名*/
+    private static String fullUsername=null;
+    public static String getFullUsername(){return fullUsername;};
+    public static void setFullUsername(String fullUsername){AppConfig.fullUsername=fullUsername;}
     /**此username永远没有后缀，即没有head或uuid后缀*/
     private static String username=null;
     private static String password=null;

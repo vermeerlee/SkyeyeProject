@@ -14,29 +14,55 @@ public class LoginUtil {
 
     public static final String USERNAME_HEADEND="_head";
     public static final String USERNAME_EYE_DEPART="_";
-    /**使用新用户重新登录,如果提示用户名密码错误则先注册再登录*/
+
+    /**登录*/
+    public static void login(final String username, final String password, final EMCallBack callBack) {
+        EMChatManager.getInstance().login(username, password, new EMCallBack() {
+            @Override
+            public void onSuccess() {
+                //保存用户名密码
+                AppConfig.setUsername(username);
+                AppConfig.setPassword(password);
+                callBack.onSuccess();
+            }
+
+            @Override
+            public void onError(int i, String s) {
+                callBack.onError(i,s);
+            }
+
+            @Override
+            public void onProgress(int i, String s) {
+                callBack.onProgress(i,s);
+            }
+        });
+    }
+
+    /**使用新用户(eye或head)重新登录,如果提示用户名密码错误则先注册再登录*/
     public static void relogin(final String username, final EMCallBack callBack){
         logout();
         EMChatManager.getInstance().login(username, AppConfig.getPassword(), new EMCallBack() {
             @Override
             public void onSuccess() {
+                //保存全用户名（eye或head）
+                AppConfig.setFullUsername(username);
                 //登录成功后需要调用
                 EMGroupManager.getInstance().loadAllGroups();
                 EMChatManager.getInstance().loadAllConversations();
-                if(callBack!=null) {
+                if (callBack != null) {
                     callBack.onSuccess();
                 }
             }
 
             @Override
             public void onError(int i, String s) {
-                if(i==ERROR_EXCEPTION_INVALID_PASSWORD_USERNAME){
+                if (i == ERROR_EXCEPTION_INVALID_PASSWORD_USERNAME) {
                     //注册username
                     new Thread(new Runnable() {
                         @Override
                         public void run() {
                             try {
-                                EMChatManager.getInstance().createAccountOnServer(username,AppConfig.getPassword());//异步调用
+                                EMChatManager.getInstance().createAccountOnServer(username, AppConfig.getPassword());//异步调用
                                 relogin(username, null);
                             } catch (EaseMobException e) {
                                 e.printStackTrace();
@@ -68,4 +94,6 @@ public class LoginUtil {
     public static void logout(){
         EMChatManager.getInstance().logout();//此方法为同步方法
     }
+
+
 }

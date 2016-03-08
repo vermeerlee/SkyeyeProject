@@ -11,11 +11,10 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.easemob.EMCallBack;
-import com.easemob.chat.EMChatManager;
 import com.xmh.skyeyedemo.R;
-import com.xmh.skyeyedemo.application.AppConfig;
 import com.xmh.skyeyedemo.base.BaseActivity;
 import com.xmh.skyeyedemo.utils.CommonUtil;
+import com.xmh.skyeyedemo.utils.LoginUtil;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -63,15 +62,13 @@ public class LoginActivity extends BaseActivity {
         pd.show();
         //endregion
         //请求登录
-        EMChatManager.getInstance().login(username, password, new EMCallBack() {
+        LoginUtil.login(username,password,new EMCallBack() {
             @Override
             public void onSuccess() {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         pd.dismiss();
-                        AppConfig.setUsername(username);
-                        AppConfig.setPassword(password);
                         Snackbar.make(getWindow().getDecorView(), R.string.login_success, Snackbar.LENGTH_SHORT).show();
                         startActivity(new Intent(LoginActivity.this, ChoseActivity.class));
                         LoginActivity.this.finish();
