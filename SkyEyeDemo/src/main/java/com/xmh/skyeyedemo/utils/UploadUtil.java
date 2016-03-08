@@ -4,7 +4,7 @@ import android.content.Context;
 
 import com.bmob.BmobProFile;
 import com.bmob.btp.callback.UploadListener;
-import com.xmh.skyeyedemo.bean.FileBean;
+import com.xmh.skyeyedemo.bean.FileBmobBean;
 
 import cn.bmob.v3.datatype.BmobFile;
 
@@ -20,7 +20,7 @@ public class UploadUtil {
             @Override
             public void onSuccess(String s, String s1, BmobFile bmobFile) {
                 //上传完成后保存到数据库
-                new FileBean(bmobFile).save(context);
+                new FileBmobBean(bmobFile).save(context);
                 LogUtil.e("xmh-record", "upload file success",true);
             }
 

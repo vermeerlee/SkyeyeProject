@@ -5,7 +5,9 @@ import com.easemob.EMError;
 import com.easemob.chat.EMChatManager;
 import com.easemob.chat.EMGroupManager;
 import com.easemob.exceptions.EaseMobException;
+import com.xmh.skyeyedemo.application.App;
 import com.xmh.skyeyedemo.application.AppConfig;
+import com.xmh.skyeyedemo.bean.UserBmobBean;
 
 /**
  * Created by mengh on 2016/2/24 024.
@@ -64,6 +66,11 @@ public class LoginUtil {
                             try {
                                 EMChatManager.getInstance().createAccountOnServer(username, AppConfig.getPassword());//异步调用
                                 relogin(username, null);
+                                //region 保存用户信息到Bmob
+                                UserBmobBean userBmobBean = new UserBmobBean();
+                                userBmobBean.setFullUsername(username);
+                                userBmobBean.save(App.getContext());
+                                //endregion
                             } catch (EaseMobException e) {
                                 e.printStackTrace();
                                 //注册失败

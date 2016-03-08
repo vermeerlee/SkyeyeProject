@@ -2,6 +2,7 @@ package com.xmh.skyeyedemo.application;
 
 import android.app.ActivityManager;
 import android.app.Application;
+import android.content.Context;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.util.Log;
@@ -21,12 +22,14 @@ import java.util.List;
  */
 public class App extends Application{
 
+    private static Context mContext;
     EMConnectionListener connectionListener;
     private NewMessageBroadcastReceiver msgReceiver;
 
     @Override
     public void onCreate() {
         super.onCreate();
+        mContext=this;
 
         initHuanXin();
         initReceiver();
@@ -73,6 +76,9 @@ public class App extends Application{
 
     }
 
+    public static Context getContext(){
+        return mContext;
+    }
 
     /**初始化环信配置*/
     private void initHuanXinOptions() {

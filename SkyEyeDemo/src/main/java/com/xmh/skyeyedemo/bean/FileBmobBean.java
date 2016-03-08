@@ -7,23 +7,22 @@ import java.io.File;
 import cn.bmob.v3.BmobObject;
 import cn.bmob.v3.datatype.BmobFile;
 
-/**
- * Created by mengh on 2016/3/4 004.
+/**每个文件都保存在bean中
  */
-public class FileBean extends BmobObject{
+public class FileBmobBean extends BmobObject{
 
     /**使用用户名初始化，不允许修改*/
-    private String username= AppConfig.getUsername();
+    private String username= AppConfig.getFullUsername();
 
     /**文件信息*/
     private BmobFile videoFile;
 
     //region constructor
-    public FileBean(BmobFile videoFile) {
+    public FileBmobBean(BmobFile videoFile) {
         this.videoFile = videoFile;
     }
 
-    public FileBean(String filePath) {
+    public FileBmobBean(String filePath) {
         this.videoFile=new BmobFile(new File(filePath));
     }
     //endregion
