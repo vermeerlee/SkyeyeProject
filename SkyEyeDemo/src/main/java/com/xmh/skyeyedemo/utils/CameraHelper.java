@@ -345,6 +345,15 @@ public class CameraHelper implements Camera.PreviewCallback {
 //        mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
 //        mediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
 //        mediaRecorder.setVideoEncoder(MediaRecorder.VideoEncoder.MPEG_4_SP);
+            //region设置录制方向
+            if (cameraInfo.facing == Camera.CameraInfo.CAMERA_FACING_BACK) {
+                if (isScreenOriatationPortrait()) {
+                    if (cameraInfo.orientation == 90) {
+                        mediaRecorder.setOrientationHint(90);
+                    }
+                }
+            }
+            //endregion
             //设置输出文件
             this.currentVideoFileName=FileUtil.getVideoFileFullName();
             mediaRecorder.setOutputFile(currentVideoFileName);

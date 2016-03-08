@@ -100,6 +100,7 @@ public class WatchActivity extends BaseActivity {
         audioManager.setMode(AudioManager.MODE_RINGTONE);
         audioManager.setSpeakerphoneOn(true);
 
+        //监听结束通话广播
         LocalBroadcastManager.getInstance(this).registerReceiver(new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
