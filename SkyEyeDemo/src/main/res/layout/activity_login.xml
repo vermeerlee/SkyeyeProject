@@ -65,9 +65,8 @@
             android:layout_marginTop="30dp"
             android:orientation="horizontal" >
 
-
             <Button
-                android:id="@+id/btn_login"
+                android:id="@+id/btn_head_login"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dip"
@@ -76,7 +75,21 @@
                 android:gravity="center"
                 android:paddingBottom="7dp"
                 android:paddingTop="7dp"
-                android:text="@string/login"
+                android:text="@string/head"
+                android:textColor="@android:color/white"
+                android:textSize="18sp" />
+
+            <Button
+                android:id="@+id/btn_eye_login"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dip"
+                android:layout_marginRight="10dip"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:paddingBottom="7dp"
+                android:paddingTop="7dp"
+                android:text="@string/eye"
                 android:textColor="@android:color/white"
                 android:textSize="18sp" />
         </LinearLayout>

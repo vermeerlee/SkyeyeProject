@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.text.TextUtils;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -24,7 +23,6 @@ public class LoginActivity extends BaseActivity {
 
     @Bind(R.id.et_username)EditText etUsername;
     @Bind(R.id.et_password)EditText etPassword;
-    @Bind(R.id.btn_login)Button btnLogin;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,8 +31,8 @@ public class LoginActivity extends BaseActivity {
         ButterKnife.bind(this);
     }
 
-    @OnClick(R.id.btn_login)
-    void onLoginClick(View view){
+    @OnClick({R.id.btn_head_login,R.id.btn_eye_login})
+    void onLoginClick(final View view){
         CommonUtil.closeInputMethod(this);
         //region 检查网络连接
         if (!CommonUtil.isNetWorkConnected(this)) {
@@ -70,7 +68,11 @@ public class LoginActivity extends BaseActivity {
                     public void run() {
                         pd.dismiss();
                         Snackbar.make(getWindow().getDecorView(), R.string.login_success, Snackbar.LENGTH_SHORT).show();
-                        startActivity(new Intent(LoginActivity.this, ChoseActivity.class));
+                        if(view.getId()==R.id.btn_head_login){
+                            startActivity(new Intent(LoginActivity.this, MainActivity.class));
+                        }else if(view.getId()==R.id.btn_eye_login) {
+                            startActivity(new Intent(LoginActivity.this, WatchActivity.class));
+                        }
                         LoginActivity.this.finish();
                     }
                 });
@@ -97,6 +99,8 @@ public class LoginActivity extends BaseActivity {
             }
         });
     }
+
+
 
     @Override
     public void onBackPressed() {

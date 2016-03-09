@@ -40,8 +40,6 @@
         </activity>
         <activity android:name=".activity.WatchActivity">
         </activity>
-        <activity android:name=".activity.ChoseActivity">
-        </activity>
         <activity android:name=".activity.VideoActivity"
             android:screenOrientation="portrait">
         </activity>
