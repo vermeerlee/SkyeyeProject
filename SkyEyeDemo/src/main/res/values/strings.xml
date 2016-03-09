@@ -26,4 +26,8 @@
     <string name="node_using">该终端正在远程操控，无法退出</string>
     <string name="press_exit">再按一次退出程序</string>
     <string name="loading">正在加载...</string>
+    <string name="change_name">改名</string>
+    <string name="real_time">实时</string>
+    <string name="history_record">记录</string>
+    <string name="sure">确定</string>
 </resources>
