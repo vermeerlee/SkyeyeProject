@@ -26,7 +26,6 @@ public class CameraHelper implements Camera.PreviewCallback {
     private final EMVideoCallHelper mCallHelper;
     private final SurfaceHolder mSurfaceHolder;
 
-    private boolean startFlag;
     private Camera.CameraInfo cameraInfo;
     private int camera_count;
     private Camera mCamera;
@@ -34,7 +33,12 @@ public class CameraHelper implements Camera.PreviewCallback {
     private byte[] yuv_frame;
     private byte[] yuv_Rotate90;
     private MediaRecorder mediaRecorder;
+    /**是否正在录制*/
     private boolean isRecording = false;
+    /**是否正在预览*/
+    private boolean isCapturing = false;
+    /**是否正在远程*/
+    private boolean startFlag;
 
     private String currentVideoFileName;
 
@@ -245,7 +249,11 @@ public class CameraHelper implements Camera.PreviewCallback {
      * 开启相机拍摄
      */
     public void startCapture() {
+        if(isCapturing==true){
+            stopCapture();
+        }
         try {
+            //region 选择摄像头
             cameraInfo = new Camera.CameraInfo();
             if (mCamera == null) {
                 camera_count = Camera.getNumberOfCameras();
@@ -264,8 +272,8 @@ public class CameraHelper implements Camera.PreviewCallback {
                     mCamera = Camera.open();
                     Camera.getCameraInfo(0, cameraInfo);
                 }
-
             }
+            //endregion
 
             mCamera.stopPreview();
             mParameters = mCamera.getParameters();
@@ -308,10 +316,10 @@ public class CameraHelper implements Camera.PreviewCallback {
             EMVideoCallHelper.getInstance().setResolution(mwidth, mheight);
 
             mCamera.startPreview();
-            LogUtil.e("xmh-record","start preview",true);
+            isCapturing=true;
+            LogUtil.e("xmh-record", "start preview", true);
             //region 开始record
             startVideoRecord();
-            isRecording = true;
             workHandler.postDelayed(new Runnable() {
                 @Override
                 public void run() {
@@ -362,6 +370,7 @@ public class CameraHelper implements Camera.PreviewCallback {
             //准备record
             mediaRecorder.prepare();
             mediaRecorder.start();
+            isRecording = true;
             LogUtil.e("xmh-record", "start record",true);
         } catch (Exception e) {
             e.printStackTrace();
@@ -374,6 +383,7 @@ public class CameraHelper implements Camera.PreviewCallback {
      * 结束录像
      */
     private void stopVideoRecord() {
+        isRecording = false;
         if (mediaRecorder != null) {
             //按顺序处理mediaRecorder
             try {
@@ -429,8 +439,8 @@ public class CameraHelper implements Camera.PreviewCallback {
 
     }
 
-    public void setStartFlag(boolean startFlag) {
-        this.startFlag = startFlag;
+    public void setStartFlag(boolean capture) {
+        this.startFlag = capture;
     }
 
     /**
@@ -438,15 +448,16 @@ public class CameraHelper implements Camera.PreviewCallback {
      */
     public void stopCapture() {
 
-        isRecording = false;
         stopVideoRecord();
-        startFlag = false;
+        releaseMediaRecorder();
+        isCapturing = false;
         if (mCamera != null) {
             mCamera.setPreviewCallback(null);
             mCamera.stopPreview();
             mCamera.release();
             mCamera = null;
         }
+        releaseCamera();
         LogUtil.e("xmh-record","stop preview",true);
     }
 
@@ -465,7 +476,7 @@ public class CameraHelper implements Camera.PreviewCallback {
     }
 
     private void releaseCamera() {
-        isRecording=false;
+        isCapturing =false;
         if (mCamera != null) {
             mCamera.release();
             mCamera = null;

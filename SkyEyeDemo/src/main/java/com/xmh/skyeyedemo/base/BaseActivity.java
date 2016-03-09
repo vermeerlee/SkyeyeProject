@@ -78,6 +78,7 @@ public class BaseActivity extends AppCompatActivity {
         }
         @Override
         public void onDisconnected(final int error) {
+            LogUtil.e("xmh-connected", "dis-connected");
             runOnUiThread(new Runnable() {
 
                 @Override

@@ -52,9 +52,6 @@ public class WatchActivity extends BaseActivity {
     private AudioManager audioManager;
     private boolean isGoing = false;
 
-
-    //TODO 监听视频请求如果是username开头则接受
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -88,6 +85,7 @@ public class WatchActivity extends BaseActivity {
 //        surface.setZOrderMediaOverlay(true);
 //        surface.setZOrderOnTop(true);
         callHelper = EMVideoCallHelper.getInstance();
+        LogUtil.e("xmh-record","helper-create");
         cameraHelper = new CameraHelper(this, callHelper, surface.getHolder());
 
         callHelper.setSurfaceView(null);
@@ -107,8 +105,9 @@ public class WatchActivity extends BaseActivity {
                 if(isGoing){
                     //结束通话
                     EMChatManager.getInstance().endCall();
-                    LogUtil.e("xmh-record", "end call",true);
+                    cameraHelper.setStartFlag(false);
                     isGoing=false;
+                    LogUtil.e("xmh-record", "end call", true);
                 }
             }
         },new IntentFilter(CommendUtil.ACTION_END_CALL));
@@ -237,6 +236,7 @@ public class WatchActivity extends BaseActivity {
         exitApp();
     }
 
+    /**监听视频请求如果是username开头则接受*/
     public class CallReceiver extends BroadcastReceiver {
 
         @Override
@@ -263,8 +263,8 @@ public class WatchActivity extends BaseActivity {
         try {
             EMChatManager.getInstance().answerCall();
             cameraHelper.setStartFlag(true);
-            openSpeakerOn();
             isGoing = true;
+            openSpeakerOn();
             LogUtil.e("xmh-record","answer call",true);
         } catch (Exception e) {
             e.printStackTrace();
@@ -278,15 +278,18 @@ public class WatchActivity extends BaseActivity {
 
         @Override
         public void surfaceCreated(SurfaceHolder holder) {
+            LogUtil.e("xmh-record","surface-created");
         }
 
         @Override
         public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
+            LogUtil.e("xmh-record","surface-change");
             cameraHelper.startCapture();
         }
 
         @Override
         public void surfaceDestroyed(SurfaceHolder holder) {
+            LogUtil.e("xmh-record","surface-destory");
         }
     }
 
