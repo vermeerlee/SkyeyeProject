@@ -1,5 +1,6 @@
 package com.xmh.skyeyedemo.activity;
 
+import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -35,6 +36,7 @@ public class MainActivity extends BaseActivity implements EMEventListener {
     @Bind(R.id.rv_eye_list)RecyclerView rvEyeList;
     private EyeListAdapter mEyeListAdapter;
     private ContactChangeReceiver receiver=new ContactChangeReceiver();
+    private ProgressDialog loadingDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,6 +44,17 @@ public class MainActivity extends BaseActivity implements EMEventListener {
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
 
+        loginWithHead();
+        initView();
+        initListener();
+
+    }
+
+    private void loginWithHead() {
+        loadingDialog = new ProgressDialog(this);
+        loadingDialog.setCanceledOnTouchOutside(false);
+        loadingDialog.setMessage(getString(R.string.loading_device_list));
+        loadingDialog.show();
         //退出登录并使用username_head登录
         LoginUtil.relogin(AppConfig.getUsername() + LoginUtil.USERNAME_HEADEND, new EMCallBack() {
             @Override
@@ -60,10 +73,11 @@ public class MainActivity extends BaseActivity implements EMEventListener {
                 //do nothing
             }
         });
+    }
+
+    private void initListener() {
         //注册好友列表改变广播监听
         LocalBroadcastManager.getInstance(this).registerReceiver(receiver, new IntentFilter(ContactUtil.ACTION_CONTACT_CHANGED));
-
-        initView();
     }
 
     private void initView() {
@@ -103,6 +117,8 @@ public class MainActivity extends BaseActivity implements EMEventListener {
                         @Override
                         public void run() {
                             mEyeListAdapter.setEyeList(usernames);
+                            loadingDialog.dismiss();
+
                         }
                     });
                 } catch (EaseMobException e) {

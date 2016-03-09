@@ -67,7 +67,6 @@ public class LoginActivity extends BaseActivity {
                     @Override
                     public void run() {
                         pd.dismiss();
-                        Snackbar.make(getWindow().getDecorView(), R.string.login_success, Snackbar.LENGTH_SHORT).show();
                         if(view.getId()==R.id.btn_head_login){
                             startActivity(new Intent(LoginActivity.this, MainActivity.class));
                         }else if(view.getId()==R.id.btn_eye_login) {

@@ -30,4 +30,5 @@
     <string name="real_time">实时</string>
     <string name="history_record">记录</string>
     <string name="sure">确定</string>
+    <string name="loading_device_list">正在加载设备列表</string>
 </resources>
