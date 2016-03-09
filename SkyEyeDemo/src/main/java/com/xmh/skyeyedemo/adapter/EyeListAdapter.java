@@ -41,15 +41,20 @@ public class EyeListAdapter extends RecyclerView.Adapter<EyeListAdapter.EyeViewH
         }
         notifyDataSetChanged();
         //region 根据用户名获取用户完整信息
-        for(final String name: mEyeNameList){
-            ContactUtil.pullContactInfoWithUsername(mContext, name, new ContactUtil.OnGetUserInfoListener() {
-                @Override
-                public void onGetUserInfo(UserBmobBean userBmobBean) {
-                    mEyeUserMap.put(name,userBmobBean);
-                    notifyDataSetChanged();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                for(final String name: mEyeNameList){
+                    ContactUtil.pullContactInfoWithUsername(mContext, name, new ContactUtil.OnGetUserInfoListener() {
+                        @Override
+                        public void onGetUserInfo(UserBmobBean userBmobBean) {
+                            mEyeUserMap.put(name, userBmobBean);
+                            notifyDataSetChanged();
+                        }
+                    });
                 }
-            });
-        }
+            }
+        }).start();
         //endregion
     }
 
