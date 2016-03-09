@@ -18,7 +18,7 @@ import com.easemob.chat.EMVideoCallHelper;
 public class CameraHelper implements Camera.PreviewCallback {
 
     private static final int MESSAGE_RE_RECORD = 10001;
-    private static final int RE_RECORD_DELAY = 60 * 1000;
+    private static final int RE_RECORD_DELAY = 30 * 1000;
 
     static final int mwidth = 320;
     static final int mheight = 240;
