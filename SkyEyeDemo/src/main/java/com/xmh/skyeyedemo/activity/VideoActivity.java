@@ -26,6 +26,8 @@ import butterknife.OnClick;
 
 public class VideoActivity extends BaseActivity {
 
+    public static final String EXTRA_TAG_EYENAME="eyeName";
+
     @Bind(R.id.tv_eye_name)TextView tvEyeName;
     @Bind(R.id.tv_connect_status)TextView tvConnectStatus;
     @Bind(R.id.surface_video)SurfaceView eyeSurface;
@@ -57,7 +59,7 @@ public class VideoActivity extends BaseActivity {
                         | WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);//当该window要被显示时，如果处于锁屏等状态，则唤醒屏幕
 
         //显示eye名称
-        eyeName = getIntent().getStringExtra("eyeName");
+        eyeName = getIntent().getStringExtra(EXTRA_TAG_EYENAME);
         tvEyeName.setText(eyeName);
 
         //显示eye图像

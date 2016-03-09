@@ -98,7 +98,6 @@ public class MainActivity extends BaseActivity implements EMEventListener {
                     final List<String> usernames = EMContactManager.getInstance().getContactUserNames();//需异步执行
                     //将列表保存到本地维护的好友列表
                     ContactUtil.setContacts(usernames);
-                    //TODO 根据username请求nickname
                     //将列表显示到UI
                     runOnUiThread(new Runnable() {
                         @Override

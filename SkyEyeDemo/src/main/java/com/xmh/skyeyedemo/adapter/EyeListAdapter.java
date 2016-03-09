@@ -14,6 +14,7 @@ import android.widget.RelativeLayout;
 
 import com.easemob.chat.EMChatManager;
 import com.xmh.skyeyedemo.R;
+import com.xmh.skyeyedemo.activity.RecordListActivity;
 import com.xmh.skyeyedemo.activity.VideoActivity;
 import com.xmh.skyeyedemo.bean.UserBmobBean;
 import com.xmh.skyeyedemo.utils.ContactUtil;
@@ -131,16 +132,19 @@ public class EyeListAdapter extends RecyclerView.Adapter<EyeListAdapter.EyeViewH
                 if (!EMChatManager.getInstance().isConnected())
                     Snackbar.make(v, R.string.network_isnot_available, Snackbar.LENGTH_SHORT).show();
                 else{
-                    holder.rlEdit.setVisibility(View.GONE);
-                    holder.llControl.setVisibility(View.GONE);
-                    mContext.startActivity(new Intent(mContext, VideoActivity.class).putExtra("eyeName", username));
+                    mContext.startActivity(new Intent(mContext, VideoActivity.class).putExtra(VideoActivity.EXTRA_TAG_EYENAME, username));
                 }
+                holder.rlEdit.setVisibility(View.GONE);
+                holder.llControl.setVisibility(View.GONE);
             }
         });
         holder.btnHistoryRecord.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //TODO 进入历史记录界面
+                //进入历史记录界面
+                Intent intent = new Intent(mContext, RecordListActivity.class);
+                intent.putExtra(RecordListActivity.EXTRA_TAG_EYENAME,username);
+                mContext.startActivity(intent);
                 holder.rlEdit.setVisibility(View.GONE);
                 holder.llControl.setVisibility(View.GONE);
             }

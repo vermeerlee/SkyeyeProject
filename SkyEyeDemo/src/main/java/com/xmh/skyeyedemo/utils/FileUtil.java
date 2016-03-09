@@ -14,9 +14,9 @@ import java.util.Date;
  */
 public class FileUtil {
 
-    private static final String FILE_NAME_START = "skyeye";
-    private static final String FILE_NAME_DEPART = "-";
-    private static final String FILE_NAME_END = ".mp4";
+    public static final String FILE_NAME_START = "skyeye";
+    public static final String FILE_NAME_DEPART = "-";
+    public static final String FILE_NAME_END = ".mp4";
     private static final String FILE_ROOT_PATH = "/skyeye/";
     private static final String VIDEO_FILE_PATH = "videofile/";
     private static final String LOG_FILE_PATH = "logfile/";
@@ -125,4 +125,10 @@ public class FileUtil {
         return path;
     }
 
+    public static String parseDateFromFilename(String str){
+        str=str.substring(AppConfig.getUsername().length() + FileUtil.FILE_NAME_START.length() + FileUtil.FILE_NAME_DEPART.length() * 2, str.length() - FileUtil.FILE_NAME_END.length());
+        String[] strings = str.split(FileUtil.FILE_NAME_DEPART);
+        str=new StringBuilder().append(strings[0]).append("-").append(strings[1]).append("-").append(strings[2]).append(" ").append(strings[3]).append(":").append(strings[4]).append(":").append(strings[5]).toString();
+        return str;
+    }
 }

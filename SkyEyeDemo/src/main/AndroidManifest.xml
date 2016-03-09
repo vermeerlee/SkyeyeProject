@@ -45,6 +45,8 @@
         <activity android:name=".activity.VideoActivity"
             android:screenOrientation="portrait">
         </activity>
+        <activity android:name=".activity.RecordListActivity">
+        </activity>
         <activity android:name=".activity.LoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
