@@ -1,2 +1,2 @@
-include ':DeskControl', ':SkyEye', ':SkyEyeDemo', ':ChatDemoUI', ':VitamioLibrary'
+include ':DeskControl', ':SkyEye', ':SkyEyeDemo', ':ChatDemoUI', ':VitamioLibrary', ':vitamio-sample', ':vitamio'
 include ':bmobExample'

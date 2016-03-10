@@ -1,6 +1,7 @@
 package com.xmh.skyeyedemo.adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 
 import com.xmh.skyeyedemo.R;
+import com.xmh.skyeyedemo.activity.VideoPlayActivity;
 import com.xmh.skyeyedemo.bean.FileBmobBean;
 import com.xmh.skyeyedemo.utils.FileUtil;
 
@@ -41,7 +43,7 @@ public class VideoListAdapter extends RecyclerView.Adapter<VideoListAdapter.Vide
     }
 
     @Override
-    public void onBindViewHolder(VideoViewHolder holder, int position) {
+    public void onBindViewHolder(final VideoViewHolder holder, int position) {
         holder.bean=mFileList.get(position);
         String str = holder.bean.getVideoFile().getFilename();
         str= FileUtil.parseDateFromFilename(str);
@@ -50,6 +52,9 @@ public class VideoListAdapter extends RecyclerView.Adapter<VideoListAdapter.Vide
             @Override
             public void onClick(View v) {
                 //TODO 播放
+                Intent intent = new Intent(mContext, VideoPlayActivity.class);
+                intent.putExtra(VideoPlayActivity.EXTRA_TAG_VIDEO_URL,holder.bean.getVideoFile().getUrl());
+                mContext.startActivity(intent);
             }
         });
     }

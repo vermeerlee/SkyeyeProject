@@ -15,7 +15,7 @@ import android.widget.RelativeLayout;
 import com.easemob.chat.EMChatManager;
 import com.xmh.skyeyedemo.R;
 import com.xmh.skyeyedemo.activity.RecordListActivity;
-import com.xmh.skyeyedemo.activity.VideoActivity;
+import com.xmh.skyeyedemo.activity.CallActivity;
 import com.xmh.skyeyedemo.bean.UserBmobBean;
 import com.xmh.skyeyedemo.utils.ContactUtil;
 
@@ -132,7 +132,7 @@ public class EyeListAdapter extends RecyclerView.Adapter<EyeListAdapter.EyeViewH
                 if (!EMChatManager.getInstance().isConnected())
                     Snackbar.make(v, R.string.network_isnot_available, Snackbar.LENGTH_SHORT).show();
                 else{
-                    mContext.startActivity(new Intent(mContext, VideoActivity.class).putExtra(VideoActivity.EXTRA_TAG_EYENAME, username));
+                    mContext.startActivity(new Intent(mContext, CallActivity.class).putExtra(CallActivity.EXTRA_TAG_EYENAME, username));
                 }
                 holder.rlEdit.setVisibility(View.GONE);
                 holder.llControl.setVisibility(View.GONE);

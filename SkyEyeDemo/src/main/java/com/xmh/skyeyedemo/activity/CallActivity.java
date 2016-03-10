@@ -24,7 +24,7 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class VideoActivity extends BaseActivity {
+public class CallActivity extends BaseActivity {
 
     public static final String EXTRA_TAG_EYENAME="eyeName";
 
@@ -45,7 +45,7 @@ public class VideoActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_video);
+        setContentView(R.layout.activity_call);
         ButterKnife.bind(this);
 
         audioManager = (AudioManager) this.getSystemService(Context.AUDIO_SERVICE);
@@ -228,7 +228,7 @@ public class VideoActivity extends BaseActivity {
                     // 通知cameraHelper可以写入数据
                     isStarted = true;
                 } catch (EMServiceNotReadyException e) {
-                    Snackbar.make(VideoActivity.this.getWindow().getDecorView(), R.string.connect_fail, Snackbar.LENGTH_LONG).show();
+                    Snackbar.make(CallActivity.this.getWindow().getDecorView(), R.string.connect_fail, Snackbar.LENGTH_LONG).show();
                 }
             } else {
             }
