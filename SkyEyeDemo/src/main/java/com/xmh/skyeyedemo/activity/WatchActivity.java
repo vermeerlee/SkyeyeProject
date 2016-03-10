@@ -116,8 +116,10 @@ public class WatchActivity extends BaseActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        cameraHelper.stopCapture();
-        cameraHelper = null;
+        if(cameraHelper!=null) {
+            cameraHelper.stopCapture();
+            cameraHelper = null;
+        }
         callHelper.setSurfaceView(null);
         if (isGoing) {
             isGoing=false;
