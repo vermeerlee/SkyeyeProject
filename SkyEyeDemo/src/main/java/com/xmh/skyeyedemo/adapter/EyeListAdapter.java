@@ -14,7 +14,7 @@ import android.widget.RelativeLayout;
 
 import com.easemob.chat.EMChatManager;
 import com.xmh.skyeyedemo.R;
-import com.xmh.skyeyedemo.activity.RecordListActivity;
+import com.xmh.skyeyedemo.activity.VideoListActivity;
 import com.xmh.skyeyedemo.activity.CallActivity;
 import com.xmh.skyeyedemo.bean.UserBmobBean;
 import com.xmh.skyeyedemo.utils.ContactUtil;
@@ -142,8 +142,8 @@ public class EyeListAdapter extends RecyclerView.Adapter<EyeListAdapter.EyeViewH
             @Override
             public void onClick(View v) {
                 //进入历史记录界面
-                Intent intent = new Intent(mContext, RecordListActivity.class);
-                intent.putExtra(RecordListActivity.EXTRA_TAG_EYENAME,username);
+                Intent intent = new Intent(mContext, VideoListActivity.class);
+                intent.putExtra(VideoListActivity.EXTRA_TAG_EYENAME,username);
                 mContext.startActivity(intent);
                 holder.rlEdit.setVisibility(View.GONE);
                 holder.llControl.setVisibility(View.GONE);

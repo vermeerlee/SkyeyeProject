@@ -18,9 +18,12 @@ public class UploadUtil {
         LogUtil.e("xmh-record", "upload file start",true);
         BmobProFile.getInstance(context).upload(filePath, new UploadListener() {
             @Override
-            public void onSuccess(String s, String s1, BmobFile bmobFile) {
+            public void onSuccess(String filenameForDownload, String oldUrl, BmobFile bmobFile) {
                 //上传完成后保存到数据库
-                new FileBmobBean(bmobFile).save(context);
+                FileBmobBean fileBmobBean = new FileBmobBean();
+                fileBmobBean.setVideoFile(bmobFile);
+                fileBmobBean.setFilenameForDownload(filenameForDownload);
+                fileBmobBean.save(context);
                 LogUtil.e("xmh-record", "upload file success",true);
             }
 

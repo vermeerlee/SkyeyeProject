@@ -9,7 +9,7 @@
         android:id="@+id/btn_eye_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/loading"
+        android:text="@string/loading_device_name"
         />
 
     <RelativeLayout

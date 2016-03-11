@@ -9,6 +9,8 @@ import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.View;
+import android.widget.TextView;
 
 import com.easemob.EMCallBack;
 import com.easemob.EMConnectionListener;
@@ -34,6 +36,7 @@ import butterknife.ButterKnife;
 public class MainActivity extends BaseActivity implements EMEventListener {
 
     @Bind(R.id.rv_eye_list)RecyclerView rvEyeList;
+    @Bind(R.id.tv_empty_log)TextView tvEmptyLog;
     private EyeListAdapter mEyeListAdapter;
     private ContactChangeReceiver receiver=new ContactChangeReceiver();
     private ProgressDialog loadingDialog;
@@ -116,8 +119,14 @@ public class MainActivity extends BaseActivity implements EMEventListener {
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            mEyeListAdapter.setEyeList(usernames);
-                            loadingDialog.dismiss();
+                            if(usernames!=null&&!usernames.isEmpty()) {
+                                tvEmptyLog.setVisibility(View.GONE);
+                                mEyeListAdapter.setEyeList(usernames);
+                                loadingDialog.dismiss();
+                            }else {
+                                tvEmptyLog.setText(R.string.none_device);
+                                loadingDialog.dismiss();
+                            }
 
                         }
                     });

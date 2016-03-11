@@ -3,6 +3,8 @@ package com.xmh.skyeyedemo.activity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.View;
+import android.widget.TextView;
 
 import com.xmh.skyeyedemo.R;
 import com.xmh.skyeyedemo.adapter.VideoListAdapter;
@@ -19,12 +21,13 @@ import cn.bmob.v3.listener.FindListener;
 /**
  * Created by mengh on 2016/3/9 009.
  */
-public class RecordListActivity extends BaseActivity{
+public class VideoListActivity extends BaseActivity{
 
     public static final String EXTRA_TAG_EYENAME="eyeUsername";
     private static final int ITEM_COUNT_PER_PAGE=10;
 
     @Bind(R.id.rv_video_list)RecyclerView rvVideo;
+    @Bind(R.id.tv_empty_log)TextView tvEmptyLog;
 
     private VideoListAdapter mVideoAdapter;
 
@@ -48,7 +51,12 @@ public class RecordListActivity extends BaseActivity{
         query.findObjects(this, new FindListener<FileBmobBean>() {
             @Override
             public void onSuccess(List<FileBmobBean> list) {
-                mVideoAdapter.setVideoList(list);
+                if(list!=null&&!list.isEmpty()) {
+                    mVideoAdapter.setVideoList(list);
+                    tvEmptyLog.setVisibility(View.GONE);
+                }else {
+                    tvEmptyLog.setText(R.string.none_video);
+                }
             }
 
             @Override

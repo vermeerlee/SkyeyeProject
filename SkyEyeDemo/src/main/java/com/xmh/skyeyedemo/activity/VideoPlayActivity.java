@@ -17,11 +17,16 @@
 package com.xmh.skyeyedemo.activity;
 
 
+import android.app.ProgressDialog;
 import android.os.Bundle;
-import android.widget.Toast;
+import android.support.design.widget.Snackbar;
+import android.view.View;
 
+import com.bmob.BmobProFile;
+import com.bmob.btp.callback.DownloadListener;
 import com.xmh.skyeyedemo.R;
 import com.xmh.skyeyedemo.base.BaseActivity;
+import com.xmh.skyeyedemo.bean.FileBmobBean;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -32,67 +37,88 @@ import io.vov.vitamio.widget.VideoView;
 
 public class VideoPlayActivity extends BaseActivity {
 
-	public static final String EXTRA_TAG_VIDEO_URL="VideoUrl";
+    public static final String EXTRA_TAG_VIDEO_URL = "VideoUrl";
 
-	@Bind(R.id.surface_view)VideoView mVideoView;
+    @Bind(R.id.surface_view)
+    VideoView mVideoView;
+    private FileBmobBean fileBmobBean;
 
-	private String path;
-	private String fileUrl;
-
-
-	@Override
-	public void onCreate(Bundle icicle) {
-		super.onCreate(icicle);
-		setContentView(R.layout.activity_video_play);
-		ButterKnife.bind(this);
-		Vitamio.isInitialized(this);
-
-		initView();
-		initData();
-
-		playfunction();
-
-	}
-	private void initView() {
-	}
-
-	private void initData() {
-		fileUrl = getIntent().getStringExtra(EXTRA_TAG_VIDEO_URL);
-		//TODO 下载文件
-	}
+    @Override
+    public void onCreate(Bundle icicle) {
+        super.onCreate(icicle);
+        setContentView(R.layout.activity_video_play);
+        ButterKnife.bind(this);
+        Vitamio.isInitialized(this);
 
 
+        intData();
+        requestData();
+    }
+
+    private void intData() {
+        fileBmobBean = (FileBmobBean) getIntent().getSerializableExtra(EXTRA_TAG_VIDEO_URL);
+    }
 
 
-	void playfunction(){
-		mVideoView = (VideoView) findViewById(R.id.surface_view);
+    private void requestData() {
+        final ProgressDialog progressDialog = new ProgressDialog(this);
+        progressDialog.setCanceledOnTouchOutside(false);
+        progressDialog.setMessage(getString(R.string.loading));
+        progressDialog.show();
+        //下载文件
+        BmobProFile.getInstance(this).download(fileBmobBean.getFilenameForDownload(), new DownloadListener() {
+            @Override
+            public void onSuccess(final String path) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        progressDialog.dismiss();
+                        playfunction(path);
+                    }
+                });
+            }
 
-//		path="http://file.bmob.cn/M03/D8/CC/oYYBAFbg2_SAOOInAAtpxT9bS00651.mp4";
-		path="http://dlqncdn.miaopai.com/stream/MVaux41A4lkuWloBbGUGaQ__.mp4";
-      if (path == "") {
-			// Tell the user to provide a media file URL/path.
-			Toast.makeText(VideoPlayActivity.this, "Please edit VideoViewDemo Activity, and set path" + " variable to your media file URL/path", Toast.LENGTH_LONG).show();
-			return;
-		} else {
-			/*
-			 * Alternatively,for streaming media you can use
-			 * mVideoView.setVideoURI(Uri.parse(URLstring));
-			 */
-			mVideoView.setVideoPath(path);
-//		  mVideoView.setVideoURI(Uri.parse(path));
-		  MediaController mediaController = new MediaController(this);
-		  mVideoView.setMediaController(mediaController);
-//		  mediaController.show();
-//		  mediaController.hide();
-			mVideoView.requestFocus();
+            @Override
+            public void onProgress(String path, final int percent) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        progressDialog.setProgress(percent);
+                        progressDialog.setMessage(VideoPlayActivity.this.getResources().getString(R.string.decoding));
+                    }
+                });
+            }
 
-			mVideoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-				@Override
-				public void onPrepared(MediaPlayer mediaPlayer) {
-					// optional need Vitamio 4.0
-					mediaPlayer.setPlaybackSpeed(1.0f);
-				}
-			});
-		}
-	}
+            @Override
+            public void onError(int statuscode, String errormsg) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        progressDialog.dismiss();
+                        //弹出提示“点击重试”
+                        Snackbar.make(VideoPlayActivity.this.getWindow().getDecorView(),R.string.load_fail,Snackbar.LENGTH_INDEFINITE).setAction(R.string.retry, new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                requestData();
+                            }
+                        });
+                    }
+                });
+            }
+        });
+    }
+
+
+    void playfunction(String path) {
+        mVideoView.setVideoPath(path);
+        MediaController mediaController = new MediaController(this);
+        mVideoView.setMediaController(mediaController);
+        mVideoView.requestFocus();
+        mVideoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+            @Override
+            public void onPrepared(MediaPlayer mediaPlayer) {
+                mediaPlayer.setPlaybackSpeed(1.0f);
+            }
+        });
+    }
 }

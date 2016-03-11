@@ -2,8 +2,6 @@ package com.xmh.skyeyedemo.bean;
 
 import com.xmh.skyeyedemo.application.AppConfig;
 
-import java.io.File;
-
 import cn.bmob.v3.BmobObject;
 import cn.bmob.v3.datatype.BmobFile;
 
@@ -17,14 +15,16 @@ public class FileBmobBean extends BmobObject{
     /**文件信息*/
     private BmobFile videoFile;
 
-    //region constructor
+    /**上传成功后返回的用于下载文件的文件名（bmob后台生成的文件唯一标识）*/
+    private String filenameForDownload;
+
+    //region constructor 注意创建对象时会初始化username，因此只允许在eye模式创建对象
+    public FileBmobBean() {
+    }
     public FileBmobBean(BmobFile videoFile) {
         this.videoFile = videoFile;
     }
 
-    public FileBmobBean(String filePath) {
-        this.videoFile=new BmobFile(new File(filePath));
-    }
     //endregion
 
     //region get&set
@@ -42,6 +42,14 @@ public class FileBmobBean extends BmobObject{
 
     public void setVideoFile(BmobFile videoFile) {
         this.videoFile = videoFile;
+    }
+
+    public String getFilenameForDownload() {
+        return filenameForDownload;
+    }
+
+    public void setFilenameForDownload(String filenameForDownload) {
+        this.filenameForDownload = filenameForDownload;
     }
     //endregion
 }

@@ -5,7 +5,10 @@ import android.os.Environment;
 import com.xmh.skyeyedemo.application.AppConfig;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -20,6 +23,7 @@ public class FileUtil {
     private static final String FILE_ROOT_PATH = "/skyeye/";
     private static final String VIDEO_FILE_PATH = "videofile/";
     private static final String LOG_FILE_PATH = "logfile/";
+    private static final String DOWNLOAD_FILE_PATH = "/download/";
     private static final String NOMEDIA_FILENAME = ".nomedia";
 
     public static boolean checkSDCardAvailable() {
@@ -131,4 +135,46 @@ public class FileUtil {
         str=new StringBuilder().append(strings[0]).append("-").append(strings[1]).append("-").append(strings[2]).append(" ").append(strings[3]).append(":").append(strings[4]).append(":").append(strings[5]).toString();
         return str;
     }
+
+    public static void copyFile(String srcPath,String dstPath){
+        try {
+            File oldfile = new File(srcPath);
+            if (oldfile.exists()) { //文件存在时
+                File dir=new File(new File(dstPath).getParent());
+                if(!dir.exists()){//创建目标路径
+                    dir.mkdir();
+                }
+                File file=new File(dstPath);
+                if(!file.exists()){//创建目标文件
+                    file.createNewFile();
+                }
+                int bytesum = 0;
+                int byteread = 0;
+                InputStream inStream = new FileInputStream(srcPath); //读入原文件
+                FileOutputStream outStream = new FileOutputStream(file);
+                byte[] buffer = new byte[1444];
+                int length;
+                while ( (byteread = inStream.read(buffer)) != -1) {
+                    bytesum += byteread; //字节数 文件大小
+                    System.out.println(bytesum);
+                    outStream.write(buffer, 0, byteread);
+                }
+                outStream.flush();
+                outStream.close();
+                inStream.close();
+            }
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static String getDownloadPath(){
+        if (checkSDCardAvailable()) {
+            return Environment.getExternalStorageDirectory() + DOWNLOAD_FILE_PATH ;
+        }
+        return Environment.getDataDirectory() + DOWNLOAD_FILE_PATH;
+
+    }
+
 }

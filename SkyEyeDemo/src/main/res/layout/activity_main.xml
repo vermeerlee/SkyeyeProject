@@ -6,10 +6,11 @@
     tools:context=".activity.MainActivity">
 
     <TextView
+        android:id="@+id/tv_empty_log"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
-        android:text="main"
+        android:text="@string/loading_device_list"
         />
 
     <android.support.v7.widget.RecyclerView
