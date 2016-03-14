@@ -42,4 +42,6 @@
     <string name="delete">删除</string>
     <string name="download">下载</string>
     <string name="downloading">正在下载</string>
+    <string name="download_path">下载到文件夹</string>
+    <string name="open">打开</string>
 </resources>

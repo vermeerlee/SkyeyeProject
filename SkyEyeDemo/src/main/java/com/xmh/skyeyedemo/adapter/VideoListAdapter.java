@@ -4,10 +4,12 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.support.design.widget.Snackbar;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.MimeTypeMap;
 import android.widget.Button;
 import android.widget.LinearLayout;
 
@@ -31,7 +33,7 @@ public class VideoListAdapter extends RecyclerView.Adapter<VideoListAdapter.Vide
     private Context mContext;
     private List<FileBmobBean> mFileList=new ArrayList<>();
 
-    public VideoListAdapter(Context context){
+    public VideoListAdapter(Context context ){
         mContext=context;
     }
 
@@ -103,14 +105,20 @@ public class VideoListAdapter extends RecyclerView.Adapter<VideoListAdapter.Vide
                                 holder.btnDownload.post(new Runnable() {
                                     @Override
                                     public void run() {
+                                        LogUtil.e("xmh-download", dstPath);
                                         progressDialog.dismiss();
-                                        File file = new File(dstPath);
-                                        String folder = file.getParent();
-                                        LogUtil.e("xmh-download", folder);
-                                        Intent intent = new Intent();
-                                        intent.setAction(Intent.ACTION_VIEW);
-                                        intent.setDataAndType(Uri.fromFile(new File(folder)), "*/*");
-                                        mContext.startActivity(intent);
+                                        //TODO 让这个snackbar消失
+                                        Snackbar.make(holder.itemView,mContext.getString(R.string.download_path)+dstPath,Snackbar.LENGTH_INDEFINITE).setAction(R.string.open, new View.OnClickListener() {
+                                            @Override
+                                            public void onClick(View v) {
+                                                Intent intent = new Intent();
+                                                intent.setAction(Intent.ACTION_VIEW);
+                                                String mimeType = MimeTypeMap.getFileExtensionFromUrl(dstPath);
+                                                Uri uri = Uri.fromFile(new File(dstPath));
+                                                intent.setDataAndType(uri, "video/mp4");
+                                                mContext.startActivity(intent);
+                                            }
+                                        }).show();
                                     }
                                 });
                             }
