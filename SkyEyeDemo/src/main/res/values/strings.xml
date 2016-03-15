@@ -44,4 +44,5 @@
     <string name="downloading">正在下载</string>
     <string name="download_path">下载到文件夹</string>
     <string name="open">打开</string>
+    <string name="login_fail_server">连接不到服务器</string>
 </resources>

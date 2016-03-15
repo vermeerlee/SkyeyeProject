@@ -89,6 +89,8 @@ public class LoginActivity extends BaseActivity {
                             case ERROR_EXCEPTION_INVALID_PASSWORD_USERNAME:
                                 Snackbar.make(snackbarContainer, R.string.login_fail_username_psw, Snackbar.LENGTH_SHORT).show();
                                 break;
+                            case ERROR_EXCEPTION_UNABLE_CONNECT_TO_SERVER:
+                                Snackbar.make(snackbarContainer, R.string.login_fail_server, Snackbar.LENGTH_SHORT).show();
                         }
                         int a=i;
                     }
