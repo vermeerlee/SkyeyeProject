@@ -73,7 +73,8 @@ public class FileUtil {
         return stringBuilder.toString();
     }
 
-    public static String getVideoFileFullName() {
+    /**生成完整文件名*/
+    public static String generateVideoFileFullName() {
         String fullFilename = null;
         try {
             File folder = new File(getVideoFilePath());
@@ -98,6 +99,7 @@ public class FileUtil {
         return fullFilename;
     }
 
+    /**创建nomedia文件*/
     public static void checkAndCreateNomedia() {
         try {
             File folder = new File(getVideoFilePathOnPhone());
@@ -115,6 +117,7 @@ public class FileUtil {
         }
     }
 
+    /**获取log保存路径*/
     public static String getLogFilePath() {
         String path=null;
         if (checkSDCardAvailable()) {
@@ -129,11 +132,21 @@ public class FileUtil {
         return path;
     }
 
+    /**根据文件名解析日期时间*/
     public static String parseDateFromFilename(String str){
         str=str.substring(AppConfig.getUsername().length() + FileUtil.FILE_NAME_START.length() + FileUtil.FILE_NAME_DEPART.length() * 2, str.length() - FileUtil.FILE_NAME_END.length());
         String[] strings = str.split(FileUtil.FILE_NAME_DEPART);
         str=new StringBuilder().append(strings[0]).append("-").append(strings[1]).append("-").append(strings[2]).append(" ").append(strings[3]).append(":").append(strings[4]).append(":").append(strings[5]).toString();
         return str;
+    }
+
+    /**获取下载文件保存路径*/
+    public static String getDownloadPath(){
+        if (checkSDCardAvailable()) {
+            return Environment.getExternalStorageDirectory() + DOWNLOAD_FILE_PATH ;
+        }
+        return Environment.getDataDirectory() + DOWNLOAD_FILE_PATH;
+
     }
 
     public static void copyFile(String srcPath,String dstPath){
@@ -169,12 +182,8 @@ public class FileUtil {
         }
     }
 
-    public static String getDownloadPath(){
-        if (checkSDCardAvailable()) {
-            return Environment.getExternalStorageDirectory() + DOWNLOAD_FILE_PATH ;
-        }
-        return Environment.getDataDirectory() + DOWNLOAD_FILE_PATH;
-
+    public static void deleteFile(String fullFilename){
+        new File(fullFilename).deleteOnExit();
     }
 
 }

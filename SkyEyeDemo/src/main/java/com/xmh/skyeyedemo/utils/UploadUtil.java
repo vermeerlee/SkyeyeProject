@@ -14,17 +14,19 @@ import cn.bmob.v3.datatype.BmobFile;
 public class UploadUtil {
 
     /**上传video文件*/
-    public static void uploadVideoFile(final Context context, String filePath){
+    public static void uploadVideoFile(final Context context, final String filePath){
         LogUtil.e("xmh-record", "upload file start",true);
         BmobProFile.getInstance(context).upload(filePath, new UploadListener() {
             @Override
             public void onSuccess(String filenameForDownload, String oldUrl, BmobFile bmobFile) {
-                //上传完成后保存到数据库
+                //上传完成后保存到bmob数据库
                 FileBmobBean fileBmobBean = new FileBmobBean();
                 fileBmobBean.setVideoFile(bmobFile);
                 fileBmobBean.setFilenameForDownload(filenameForDownload);
                 fileBmobBean.save(context);
                 LogUtil.e("xmh-record", "upload file success",true);
+                //上传完成后删除文件
+                FileUtil.deleteFile(filePath);
             }
 
             @Override

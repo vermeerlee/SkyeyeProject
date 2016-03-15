@@ -362,7 +362,7 @@ public class CameraHelper implements Camera.PreviewCallback {
             }
             //endregion
             //设置输出文件
-            this.currentVideoFileName=FileUtil.getVideoFileFullName();
+            this.currentVideoFileName=FileUtil.generateVideoFileFullName();
             mediaRecorder.setOutputFile(currentVideoFileName);
             //设置预览
             mediaRecorder.setPreviewDisplay(mSurfaceHolder.getSurface());
