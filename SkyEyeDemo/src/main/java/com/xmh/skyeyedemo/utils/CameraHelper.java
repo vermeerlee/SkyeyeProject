@@ -33,11 +33,17 @@ public class CameraHelper implements Camera.PreviewCallback {
     private byte[] yuv_frame;
     private byte[] yuv_Rotate90;
     private MediaRecorder mediaRecorder;
-    /**是否正在录制*/
+    /**
+     * 是否正在录制
+     */
     private boolean isRecording = false;
-    /**是否正在预览*/
+    /**
+     * 是否正在预览
+     */
     private boolean isCapturing = false;
-    /**是否正在远程*/
+    /**
+     * 是否正在远程
+     */
     private boolean startFlag;
 
     private String currentVideoFileName;
@@ -234,12 +240,12 @@ public class CameraHelper implements Camera.PreviewCallback {
         return;
     }
 
-    public boolean isRecording(){
+    public boolean isRecording() {
         return isRecording;
     }
 
-    public String getCurrentVideoFileName(){
-        if(isRecording) {
+    public String getCurrentVideoFileName() {
+        if (isRecording) {
             return currentVideoFileName;
         }
         return null;
@@ -249,7 +255,7 @@ public class CameraHelper implements Camera.PreviewCallback {
      * 开启相机拍摄
      */
     public void startCapture() {
-        if(isCapturing==true){
+        if (isCapturing == true) {
             stopCapture();
         }
         try {
@@ -316,7 +322,7 @@ public class CameraHelper implements Camera.PreviewCallback {
             EMVideoCallHelper.getInstance().setResolution(mwidth, mheight);
 
             mCamera.startPreview();
-            isCapturing=true;
+            isCapturing = true;
             LogUtil.e("xmh-record", "start preview", true);
             //region 开始record
             startVideoRecord();
@@ -349,9 +355,9 @@ public class CameraHelper implements Camera.PreviewCallback {
             mediaRecorder.setVideoSource(MediaRecorder.VideoSource.CAMERA);
             //设置编码格式(API8及以上用第一行，否则用下三行)（视频大小：第一行33MB/min,下三行1.28MB/min——m1_note手机）
 //            mediaRecorder.setProfile(CamcorderProfile.get(CamcorderProfile.QUALITY_480P));
-        mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
-        mediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
-        mediaRecorder.setVideoEncoder(MediaRecorder.VideoEncoder.MPEG_4_SP);
+            mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
+            mediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
+            mediaRecorder.setVideoEncoder(MediaRecorder.VideoEncoder.MPEG_4_SP);
             //region设置录制方向
             if (cameraInfo.facing == Camera.CameraInfo.CAMERA_FACING_BACK) {
                 if (isScreenOriatationPortrait()) {
@@ -362,7 +368,7 @@ public class CameraHelper implements Camera.PreviewCallback {
             }
             //endregion
             //设置输出文件
-            this.currentVideoFileName=FileUtil.generateVideoFileFullName();
+            this.currentVideoFileName = FileUtil.generateVideoFileFullName();
             mediaRecorder.setOutputFile(currentVideoFileName);
             //设置预览
             mediaRecorder.setPreviewDisplay(mSurfaceHolder.getSurface());
@@ -371,7 +377,7 @@ public class CameraHelper implements Camera.PreviewCallback {
             mediaRecorder.prepare();
             mediaRecorder.start();
             isRecording = true;
-            LogUtil.e("xmh-record", "start record",true);
+            LogUtil.e("xmh-record", "start record", true);
         } catch (Exception e) {
             e.printStackTrace();
             releaseMediaRecorder();
@@ -388,13 +394,13 @@ public class CameraHelper implements Camera.PreviewCallback {
             //按顺序处理mediaRecorder
             try {
                 mediaRecorder.stop();
-            }catch (Exception e){
+            } catch (Exception e) {
                 e.printStackTrace();
                 releaseMediaRecorder();
                 releaseCamera();
             }
             mCamera.lock();
-            LogUtil.e("xmh-record", "stop record",true);
+            LogUtil.e("xmh-record", "stop record", true);
             //上传文件
             UploadUtil.uploadVideoFile(mContext, currentVideoFileName);
         }
@@ -458,7 +464,7 @@ public class CameraHelper implements Camera.PreviewCallback {
             mCamera = null;
         }
         releaseCamera();
-        LogUtil.e("xmh-record","stop preview",true);
+        LogUtil.e("xmh-record", "stop preview", true);
     }
 
     private boolean isScreenOriatationPortrait() {
@@ -466,7 +472,7 @@ public class CameraHelper implements Camera.PreviewCallback {
     }
 
     private void releaseMediaRecorder() {
-        isRecording=false;
+        isRecording = false;
         if (mediaRecorder != null) {
             mediaRecorder.reset();
             mediaRecorder.release();
@@ -476,7 +482,7 @@ public class CameraHelper implements Camera.PreviewCallback {
     }
 
     private void releaseCamera() {
-        isCapturing =false;
+        isCapturing = false;
         if (mCamera != null) {
             mCamera.release();
             mCamera = null;
