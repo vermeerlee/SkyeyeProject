@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -37,6 +38,7 @@ public class MainActivity extends BaseActivity implements EMEventListener {
 
     @Bind(R.id.rv_eye_list)RecyclerView rvEyeList;
     @Bind(R.id.tv_empty_log)TextView tvEmptyLog;
+    @Bind(R.id.cl_snackbar)CoordinatorLayout snackbarContainer;
     private EyeListAdapter mEyeListAdapter;
     private ContactChangeReceiver receiver=new ContactChangeReceiver();
     private ProgressDialog loadingDialog;
@@ -85,7 +87,7 @@ public class MainActivity extends BaseActivity implements EMEventListener {
 
     private void initView() {
         rvEyeList.setLayoutManager(new LinearLayoutManager(this));
-        mEyeListAdapter = new EyeListAdapter(this);
+        mEyeListAdapter = new EyeListAdapter(this,snackbarContainer);
         rvEyeList.setAdapter(mEyeListAdapter);
     }
 

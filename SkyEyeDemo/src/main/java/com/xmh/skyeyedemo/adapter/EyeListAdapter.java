@@ -30,11 +30,14 @@ import java.util.Map;
 public class EyeListAdapter extends RecyclerView.Adapter<EyeListAdapter.EyeViewHolder> {
 
     private Context mContext;
+    private View mSnackbarContainer;
+
     private List<String> mEyeNameList =new ArrayList<>();
     private Map<String,UserBmobBean> mEyeUserMap=new HashMap<>();
 
-    public EyeListAdapter(Context context){
+    public EyeListAdapter(Context context,View snackbarContainer){
         mContext=context;
+        mSnackbarContainer=snackbarContainer;
     }
 
     public void setEyeList(List<String> list){
@@ -130,7 +133,7 @@ public class EyeListAdapter extends RecyclerView.Adapter<EyeListAdapter.EyeViewH
             public void onClick(View v) {
                 //点击开启视频请求
                 if (!EMChatManager.getInstance().isConnected())
-                    Snackbar.make(v, R.string.network_isnot_available, Snackbar.LENGTH_SHORT).show();
+                    Snackbar.make(mSnackbarContainer, R.string.network_isnot_available, Snackbar.LENGTH_SHORT).show();
                 else{
                     mContext.startActivity(new Intent(mContext, CallActivity.class).putExtra(CallActivity.EXTRA_TAG_EYENAME, username));
                 }

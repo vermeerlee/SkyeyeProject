@@ -1,6 +1,7 @@
 package com.xmh.skyeyedemo.activity;
 
 import android.os.Bundle;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -28,6 +29,7 @@ public class VideoListActivity extends BaseActivity{
 
     @Bind(R.id.rv_video_list)RecyclerView rvVideo;
     @Bind(R.id.tv_empty_log)TextView tvEmptyLog;
+    @Bind(R.id.cl_snackbar)CoordinatorLayout snackbarContainer;
 
     private VideoListAdapter mVideoAdapter;
 
@@ -67,7 +69,7 @@ public class VideoListActivity extends BaseActivity{
 
     private void initView() {
         rvVideo.setLayoutManager(new LinearLayoutManager(this));
-        mVideoAdapter=new VideoListAdapter(this);
+        mVideoAdapter=new VideoListAdapter(this,snackbarContainer);
         rvVideo.setAdapter(mVideoAdapter);
     }
 }

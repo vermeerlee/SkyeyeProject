@@ -32,9 +32,11 @@ public class VideoListAdapter extends RecyclerView.Adapter<VideoListAdapter.Vide
 
     private Context mContext;
     private List<FileBmobBean> mFileList=new ArrayList<>();
+    private View mSnackbarContainer;
 
-    public VideoListAdapter(Context context ){
+    public VideoListAdapter(Context context,View snackbarContainer){
         mContext=context;
+        mSnackbarContainer = snackbarContainer;
     }
 
     public void setVideoList(List<FileBmobBean> list){
@@ -107,8 +109,8 @@ public class VideoListAdapter extends RecyclerView.Adapter<VideoListAdapter.Vide
                                     public void run() {
                                         LogUtil.e("xmh-download", dstPath);
                                         progressDialog.dismiss();
-                                        //TODO 让这个snackbar消失
-                                        Snackbar.make(holder.itemView,mContext.getString(R.string.download_path)+dstPath,Snackbar.LENGTH_INDEFINITE).setAction(R.string.open, new View.OnClickListener() {
+                                        //snackbar滑动消失
+                                        Snackbar.make(mSnackbarContainer,mContext.getString(R.string.download_path)+dstPath,Snackbar.LENGTH_INDEFINITE).setAction(R.string.open, new View.OnClickListener() {
                                             @Override
                                             public void onClick(View v) {
                                                 Intent intent = new Intent();

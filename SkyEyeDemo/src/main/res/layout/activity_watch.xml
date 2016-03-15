@@ -16,5 +16,10 @@
         android:layout_centerInParent="true"
         android:text="watch"
         />
+    <android.support.design.widget.CoordinatorLayout
+        android:id="@+id/cl_snackbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"/>
 
 </RelativeLayout>

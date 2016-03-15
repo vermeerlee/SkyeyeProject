@@ -3,6 +3,7 @@ package com.xmh.skyeyedemo.activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.text.TextUtils;
 import android.view.View;
@@ -23,6 +24,7 @@ public class LoginActivity extends BaseActivity {
 
     @Bind(R.id.et_username)EditText etUsername;
     @Bind(R.id.et_password)EditText etPassword;
+    @Bind(R.id.cl_snackbar)CoordinatorLayout snackbarContainer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,11 +46,11 @@ public class LoginActivity extends BaseActivity {
         final String password = etPassword.getText().toString();
         //region 检查输入合法性
         if (TextUtils.isEmpty(username)) {
-            Snackbar.make(getWindow().getDecorView(), R.string.User_name_cannot_be_empty, Snackbar.LENGTH_SHORT).show();
+            Snackbar.make(snackbarContainer, R.string.User_name_cannot_be_empty, Snackbar.LENGTH_SHORT).show();
             return;
         }
         if (TextUtils.isEmpty(password)) {
-            Snackbar.make(getWindow().getDecorView(), R.string.Password_cannot_be_empty, Snackbar.LENGTH_SHORT).show();
+            Snackbar.make(snackbarContainer, R.string.Password_cannot_be_empty, Snackbar.LENGTH_SHORT).show();
             return;
         }
         //endregion
@@ -85,7 +87,7 @@ public class LoginActivity extends BaseActivity {
                         pd.dismiss();
                         switch (i){
                             case ERROR_EXCEPTION_INVALID_PASSWORD_USERNAME:
-                                Snackbar.make(getWindow().getDecorView(), R.string.login_fail_username_psw, Snackbar.LENGTH_SHORT).show();
+                                Snackbar.make(snackbarContainer, R.string.login_fail_username_psw, Snackbar.LENGTH_SHORT).show();
                                 break;
                         }
                         int a=i;

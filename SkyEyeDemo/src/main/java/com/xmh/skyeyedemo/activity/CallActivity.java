@@ -3,6 +3,7 @@ package com.xmh.skyeyedemo.activity;
 import android.content.Context;
 import android.media.AudioManager;
 import android.os.Bundle;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -33,6 +34,7 @@ public class CallActivity extends BaseActivity {
     @Bind(R.id.surface_video)SurfaceView eyeSurface;
     @Bind(R.id.iv_speak)ImageView ivSpeak;
     @Bind(R.id.btn_over)Button btnOver;
+    @Bind(R.id.cl_snackbar)CoordinatorLayout snackbarContainer;
 
     private String eyeName;
     private EMVideoCallHelper callHelper;
@@ -228,7 +230,7 @@ public class CallActivity extends BaseActivity {
                     // 通知cameraHelper可以写入数据
                     isStarted = true;
                 } catch (EMServiceNotReadyException e) {
-                    Snackbar.make(CallActivity.this.getWindow().getDecorView(), R.string.connect_fail, Snackbar.LENGTH_LONG).show();
+                    Snackbar.make(snackbarContainer, R.string.connect_fail, Snackbar.LENGTH_LONG).show();
                 }
             } else {
             }

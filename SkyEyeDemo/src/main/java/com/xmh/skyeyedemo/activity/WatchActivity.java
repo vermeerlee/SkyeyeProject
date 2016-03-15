@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.media.AudioManager;
 import android.os.Bundle;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.LocalBroadcastManager;
 import android.view.SurfaceHolder;
@@ -39,6 +40,7 @@ public class WatchActivity extends BaseActivity {
 
     @Bind(R.id.surface)
     SurfaceView surface;
+    @Bind(R.id.cl_snackbar)CoordinatorLayout snackbarContainer;
 
     /**
      * 视频请求监听
@@ -232,7 +234,7 @@ public class WatchActivity extends BaseActivity {
     @Override
     public void onBackPressed() {
         if (isGoing) {
-            Snackbar.make(getWindow().getDecorView(), R.string.node_using, Snackbar.LENGTH_SHORT).show();
+            Snackbar.make(snackbarContainer, R.string.node_using, Snackbar.LENGTH_SHORT).show();
             return;
         }
         exitApp();

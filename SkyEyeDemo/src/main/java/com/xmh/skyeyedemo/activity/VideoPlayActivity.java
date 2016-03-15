@@ -19,6 +19,7 @@ package com.xmh.skyeyedemo.activity;
 
 import android.app.ProgressDialog;
 import android.os.Bundle;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.view.View;
 
@@ -41,6 +42,8 @@ public class VideoPlayActivity extends BaseActivity {
 
     @Bind(R.id.surface_view)
     VideoView mVideoView;
+    @Bind(R.id.cl_snackbar)CoordinatorLayout snackbarContainer;
+
     private FileBmobBean fileBmobBean;
 
     @Override
@@ -95,8 +98,8 @@ public class VideoPlayActivity extends BaseActivity {
                     @Override
                     public void run() {
                         progressDialog.dismiss();
-                        //弹出提示“点击重试”
-                        Snackbar.make(VideoPlayActivity.this.getWindow().getDecorView(),R.string.load_fail,Snackbar.LENGTH_INDEFINITE).setAction(R.string.retry, new View.OnClickListener() {
+                        //弹出提示“点击重试”，snackbar滑动消失
+                        Snackbar.make(snackbarContainer,R.string.load_fail,Snackbar.LENGTH_INDEFINITE).setAction(R.string.retry, new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
                                 requestData();
