@@ -183,7 +183,9 @@ public class FileUtil {
     }
 
     public static void deleteFile(String fullFilename){
-        new File(fullFilename).deleteOnExit();
+        File file = new File(fullFilename);
+        if(file.exists()){
+            file.delete();
+        }
     }
-
 }
