@@ -376,6 +376,9 @@ public class CameraHelper implements Camera.PreviewCallback {
             //准备record
             mediaRecorder.prepare();
             mediaRecorder.start();
+            //region 调用mediaRecorder.start();后需要再次调用这句，否则远程有音无影
+            mCamera.setPreviewCallbackWithBuffer(this);
+            //endregion
             isRecording = true;
             LogUtil.e("xmh-record", "start record", true);
         } catch (Exception e) {

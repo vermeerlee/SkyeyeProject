@@ -84,8 +84,6 @@ public class WatchActivity extends BaseActivity {
             }
         });
 
-//        surface.setZOrderMediaOverlay(true);
-//        surface.setZOrderOnTop(true);
         callHelper = EMVideoCallHelper.getInstance();
         LogUtil.e("xmh-record","helper-create");
         cameraHelper = new CameraHelper(this, callHelper, surface.getHolder());
