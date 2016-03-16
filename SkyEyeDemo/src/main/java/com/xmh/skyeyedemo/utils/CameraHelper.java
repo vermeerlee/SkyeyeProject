@@ -36,7 +36,7 @@ public class CameraHelper implements Camera.PreviewCallback {
     /**
      * 是否正在录制
      */
-    private boolean isRecording = false;
+    private static boolean isRecording = false;
     /**
      * 是否正在预览
      */
@@ -46,7 +46,7 @@ public class CameraHelper implements Camera.PreviewCallback {
      */
     private boolean startFlag;
 
-    private String currentVideoFileName;
+    private static String currentVideoFileName;
 
     private Handler workHandler = new Handler() {
         @Override
@@ -244,7 +244,7 @@ public class CameraHelper implements Camera.PreviewCallback {
         return isRecording;
     }
 
-    public String getCurrentVideoFileName() {
+    public static String getCurrentVideoFileName() {
         if (isRecording) {
             return currentVideoFileName;
         }
@@ -406,6 +406,7 @@ public class CameraHelper implements Camera.PreviewCallback {
             LogUtil.e("xmh-record", "stop record", true);
             //上传文件
             UploadUtil.uploadVideoFile(mContext, currentVideoFileName);
+            UploadUtil.checkAndUploadVideoFile(mContext);
         }
     }
 

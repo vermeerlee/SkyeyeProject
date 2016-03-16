@@ -5,6 +5,7 @@ import android.os.Environment;
 import com.xmh.skyeyedemo.application.AppConfig;
 
 import java.io.File;
+import java.io.FileFilter;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -186,6 +187,31 @@ public class FileUtil {
         File file = new File(fullFilename);
         if(file.exists()){
             file.delete();
+        }
+    }
+
+    /**video文件过滤规则*/
+    static class VideoFileFilter implements FileFilter {
+        @Override
+        public boolean accept(File file) {
+            //如果目录则pass
+            if (file.isDirectory())
+                return false;
+            String fileName = file.getName();
+            //如果文件正在使用则pass
+            if(fileName.equals(CameraHelper.getCurrentVideoFileName()))
+                return false;
+            //如果文件名长度不符则pass
+            if (fileName.length() != FileUtil.generateFileNameByDateTime().length())
+                return false;
+            //如果不以规定开头则pass
+            if (!fileName.startsWith(FileUtil.FILE_NAME_START))
+                return false;
+            //如果不以规定结尾则pass
+            if (!fileName.endsWith(FileUtil.FILE_NAME_END))
+                return false;
+            //TODO 用正则表达式过滤
+            return true;
         }
     }
 }

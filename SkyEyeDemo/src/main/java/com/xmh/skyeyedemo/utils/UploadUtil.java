@@ -6,6 +6,8 @@ import com.bmob.BmobProFile;
 import com.bmob.btp.callback.UploadListener;
 import com.xmh.skyeyedemo.bean.FileBmobBean;
 
+import java.io.File;
+
 import cn.bmob.v3.datatype.BmobFile;
 
 /**
@@ -24,7 +26,7 @@ public class UploadUtil {
                 fileBmobBean.setVideoFile(bmobFile);
                 fileBmobBean.setFilenameForDownload(filenameForDownload);
                 fileBmobBean.save(context);
-                LogUtil.e("xmh-record", "upload file success",true);
+                LogUtil.e("xmh-record", "upload file success", true);
                 //上传完成后删除文件
                 FileUtil.deleteFile(filePath);
             }
@@ -42,4 +44,21 @@ public class UploadUtil {
         });
     }
 
+    /**检查是否有未上传文件*/
+    public static void checkAndUploadVideoFile(Context context){
+        File sdFolder = new File(FileUtil.getVideoFilePathOnSD());
+        File phoneFolder = new File(FileUtil.getVideoFilePathOnPhone());
+        File[] files = sdFolder.listFiles(new FileUtil.VideoFileFilter());
+        if(files!=null&&files.length>0) {
+            for (File file : files) {
+                uploadVideoFile(context, file.getAbsolutePath());
+            }
+        }
+        files=phoneFolder.listFiles(new FileUtil.VideoFileFilter());
+        if(files!=null&&files.length>0) {
+            for (File file : files) {
+                uploadVideoFile(context, file.getAbsolutePath());
+            }
+        }
+    }
 }
