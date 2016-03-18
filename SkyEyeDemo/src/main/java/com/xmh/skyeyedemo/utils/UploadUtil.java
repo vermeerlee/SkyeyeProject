@@ -17,6 +17,12 @@ public class UploadUtil {
 
     /**上传video文件*/
     public static void uploadVideoFile(final Context context, final String filePath){
+        //不足1k文件直接删除
+        File file = new File(filePath);
+        if(file.length()<1024){
+            file.delete();
+            return;
+        }
         LogUtil.e("xmh-record", "upload file start",true);
         BmobProFile.getInstance(context).upload(filePath, new UploadListener() {
             @Override
