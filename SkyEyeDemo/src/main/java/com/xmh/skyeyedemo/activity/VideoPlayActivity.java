@@ -31,6 +31,7 @@ import com.xmh.skyeyedemo.bean.FileBmobBean;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import io.vov.vitamio.MediaPlayer;
 import io.vov.vitamio.Vitamio;
 import io.vov.vitamio.widget.MediaController;
@@ -40,6 +41,7 @@ public class VideoPlayActivity extends BaseActivity {
 
     public static final String EXTRA_TAG_VIDEO_URL = "VideoUrl";
 
+    @Bind(R.id.v_background)View v;
     @Bind(R.id.surface_view)
     VideoView mVideoView;
     @Bind(R.id.cl_snackbar)CoordinatorLayout snackbarContainer;
@@ -61,7 +63,6 @@ public class VideoPlayActivity extends BaseActivity {
     private void intData() {
         fileBmobBean = (FileBmobBean) getIntent().getSerializableExtra(EXTRA_TAG_VIDEO_URL);
     }
-
 
     private void requestData() {
         final ProgressDialog progressDialog = new ProgressDialog(this);
@@ -111,7 +112,6 @@ public class VideoPlayActivity extends BaseActivity {
         });
     }
 
-
     void playfunction(String path) {
         mVideoView.setVideoPath(path);
         MediaController mediaController = new MediaController(this);
@@ -123,5 +123,10 @@ public class VideoPlayActivity extends BaseActivity {
                 mediaPlayer.setPlaybackSpeed(1.0f);
             }
         });
+    }
+
+    @OnClick(R.id.v_background)
+    void onClick(){
+        mVideoView.onKeyDown(-1,null);
     }
 }

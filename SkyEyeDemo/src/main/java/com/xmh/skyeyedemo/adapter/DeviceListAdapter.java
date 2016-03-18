@@ -27,7 +27,7 @@ import java.util.Map;
 /**
  * Created by mengh on 2016/2/26 026.
  */
-public class EyeListAdapter extends RecyclerView.Adapter<EyeListAdapter.EyeViewHolder> {
+public class DeviceListAdapter extends RecyclerView.Adapter<DeviceListAdapter.EyeViewHolder> {
 
     private Context mContext;
     private View mSnackbarContainer;
@@ -35,7 +35,7 @@ public class EyeListAdapter extends RecyclerView.Adapter<EyeListAdapter.EyeViewH
     private List<String> mEyeNameList =new ArrayList<>();
     private Map<String,UserBmobBean> mEyeUserMap=new HashMap<>();
 
-    public EyeListAdapter(Context context,View snackbarContainer){
+    public DeviceListAdapter(Context context, View snackbarContainer){
         mContext=context;
         mSnackbarContainer=snackbarContainer;
     }
@@ -135,7 +135,9 @@ public class EyeListAdapter extends RecyclerView.Adapter<EyeListAdapter.EyeViewH
                 if (!EMChatManager.getInstance().isConnected())
                     Snackbar.make(mSnackbarContainer, R.string.network_isnot_available, Snackbar.LENGTH_SHORT).show();
                 else{
-                    mContext.startActivity(new Intent(mContext, CallActivity.class).putExtra(CallActivity.EXTRA_TAG_EYENAME, username));
+                    Intent intent = new Intent(mContext, CallActivity.class);
+                    intent.putExtra(CallActivity.EXTRA_TAG_EYE_BEAN, mEyeUserMap.get(username));
+                    mContext.startActivity(intent);
                 }
                 holder.rlEdit.setVisibility(View.GONE);
                 holder.llControl.setVisibility(View.GONE);

@@ -10,7 +10,6 @@ import android.view.SurfaceView;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.easemob.chat.EMCallStateChangeListener;
@@ -19,6 +18,7 @@ import com.easemob.chat.EMVideoCallHelper;
 import com.easemob.exceptions.EMServiceNotReadyException;
 import com.xmh.skyeyedemo.R;
 import com.xmh.skyeyedemo.base.BaseActivity;
+import com.xmh.skyeyedemo.bean.UserBmobBean;
 import com.xmh.skyeyedemo.utils.CommendUtil;
 
 import butterknife.Bind;
@@ -27,16 +27,16 @@ import butterknife.OnClick;
 
 public class CallActivity extends BaseActivity {
 
-    public static final String EXTRA_TAG_EYENAME="eyeName";
+    public static final String EXTRA_TAG_EYE_BEAN="eyeBean";
 
-    @Bind(R.id.tv_eye_name)TextView tvEyeName;
     @Bind(R.id.tv_connect_status)TextView tvConnectStatus;
     @Bind(R.id.surface_video)SurfaceView eyeSurface;
-    @Bind(R.id.iv_speak)ImageView ivSpeak;
+    @Bind(R.id.btn_speak)Button btnSpeak;
     @Bind(R.id.btn_over)Button btnOver;
     @Bind(R.id.cl_snackbar)CoordinatorLayout snackbarContainer;
+    @Bind(R.id.tv_title)TextView tvTitle;
 
-    private String eyeName;
+    private UserBmobBean eyeBean;
     private EMVideoCallHelper callHelper;
     private boolean isStarted = false;
     protected EMCallStateChangeListener callStateListener;
@@ -50,6 +50,7 @@ public class CallActivity extends BaseActivity {
         setContentView(R.layout.activity_call);
         ButterKnife.bind(this);
 
+        //先话筒静音
         audioManager = (AudioManager) this.getSystemService(Context.AUDIO_SERVICE);
         audioManager.setMicrophoneMute(true);
 
@@ -60,10 +61,7 @@ public class CallActivity extends BaseActivity {
                         | WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED//锁屏时显示该window：当按下待机键锁屏后，再次按待机键显示该window而不是解锁手机界面。
                         | WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);//当该window要被显示时，如果处于锁屏等状态，则唤醒屏幕
 
-        //显示eye名称
-        eyeName = getIntent().getStringExtra(EXTRA_TAG_EYENAME);
-        tvEyeName.setText(eyeName);
-
+        initView();
         //显示eye图像
         callHelper = EMVideoCallHelper.getInstance();
         callHelper.setVideoOrientation(EMVideoCallHelper.EMVideoOrientation.EMPortrait);//此处注意与ManiFest屏幕方向一致
@@ -74,6 +72,12 @@ public class CallActivity extends BaseActivity {
         setCallStateListener();
 
         tvConnectStatus.setText(R.string.connecting);
+    }
+
+    private void initView() {
+        //显示eye名称
+        eyeBean = (UserBmobBean) getIntent().getSerializableExtra(EXTRA_TAG_EYE_BEAN);
+        tvTitle.setText(eyeBean.getNickName());
     }
 
     @Override
@@ -93,16 +97,18 @@ public class CallActivity extends BaseActivity {
         eyeSurface = null;
     }
 
-    @OnClick(R.id.iv_speak)
+    @OnClick(R.id.btn_speak)
     void onSpeakClick(View view) {
         if (isSpeaking) {
             //静音
             audioManager.setMicrophoneMute(true);
             isSpeaking = false;
+            btnSpeak.setText(R.string.speaker_off);
         } else {
             //说话
             audioManager.setMicrophoneMute(false);
             isSpeaking = true;
+            btnSpeak.setText(R.string.speaker_on);
         }
     }
 
@@ -171,13 +177,13 @@ public class CallActivity extends BaseActivity {
                                     case ERROR_BUSY:
                                         tvConnectStatus.setText(R.string.busy);
                                         //发送指令让终端结束当前通话
-                                        CommendUtil.sendCommendEndCall(eyeName, CommendUtil.COMMEND_END_CALL);
+                                        CommendUtil.sendCommendEndCall(eyeBean.getFullUsername(), CommendUtil.COMMEND_END_CALL);
                                         //延迟1秒钟重新连接
                                         tvConnectStatus.postDelayed(new Runnable() {
                                             @Override
                                             public void run() {
                                                 try {
-                                                    EMChatManager.getInstance().makeVideoCall(eyeName);
+                                                    EMChatManager.getInstance().makeVideoCall(eyeBean.getFullUsername());
                                                 } catch (EMServiceNotReadyException e) {
                                                     e.printStackTrace();
                                                 }
@@ -226,7 +232,7 @@ public class CallActivity extends BaseActivity {
             if (!isStarted) {
                 try {
                     // 拨打视频通话
-                    EMChatManager.getInstance().makeVideoCall(eyeName);
+                    EMChatManager.getInstance().makeVideoCall(eyeBean.getFullUsername());
                     // 通知cameraHelper可以写入数据
                     isStarted = true;
                 } catch (EMServiceNotReadyException e) {

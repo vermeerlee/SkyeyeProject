@@ -45,4 +45,13 @@
     <string name="download_path">下载到文件夹</string>
     <string name="open">打开</string>
     <string name="login_fail_server">连接不到服务器</string>
+    <string name="left">←</string>
+    <string name="device_list">设备列表</string>
+    <string name="menu">菜单</string>
+    <string name="refresh">刷新</string>
+    <string name="refresh_success">刷新成功</string>
+    <string name="video_list">录像列表</string>
+    <string name="refresh_fail">刷新失败</string>
+    <string name="speaker_off">话筒已关闭</string>
+    <string name="speaker_on">话筒已打开</string>
 </resources>

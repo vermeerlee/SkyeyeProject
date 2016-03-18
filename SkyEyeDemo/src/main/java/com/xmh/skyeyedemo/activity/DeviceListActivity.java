@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.Snackbar;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -22,7 +23,7 @@ import com.easemob.chat.EMChatManager;
 import com.easemob.chat.EMContactManager;
 import com.easemob.exceptions.EaseMobException;
 import com.xmh.skyeyedemo.R;
-import com.xmh.skyeyedemo.adapter.EyeListAdapter;
+import com.xmh.skyeyedemo.adapter.DeviceListAdapter;
 import com.xmh.skyeyedemo.application.AppConfig;
 import com.xmh.skyeyedemo.base.BaseActivity;
 import com.xmh.skyeyedemo.utils.ContactUtil;
@@ -33,33 +34,32 @@ import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
-public class MainActivity extends BaseActivity implements EMEventListener {
+public class DeviceListActivity extends BaseActivity implements EMEventListener {
 
     @Bind(R.id.rv_eye_list)RecyclerView rvEyeList;
     @Bind(R.id.tv_empty_log)TextView tvEmptyLog;
     @Bind(R.id.cl_snackbar)CoordinatorLayout snackbarContainer;
-    private EyeListAdapter mEyeListAdapter;
+    @Bind(R.id.tv_title)TextView tvTitle;
+    @Bind(R.id.tv_menu)TextView tvRefresh;
+    private DeviceListAdapter mDeviceListAdapter;
     private ContactChangeReceiver receiver=new ContactChangeReceiver();
     private ProgressDialog loadingDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_device_list);
         ButterKnife.bind(this);
 
-        loginWithHead();
         initView();
+        loginWithHead();
         initListener();
 
     }
 
     private void loginWithHead() {
-        loadingDialog = new ProgressDialog(this);
-        loadingDialog.setCanceledOnTouchOutside(false);
-        loadingDialog.setMessage(getString(R.string.loading_device_list));
-        loadingDialog.show();
         //退出登录并使用username_head登录
         LoginUtil.relogin(AppConfig.getUsername() + LoginUtil.USERNAME_HEADEND, new EMCallBack() {
             @Override
@@ -86,9 +86,21 @@ public class MainActivity extends BaseActivity implements EMEventListener {
     }
 
     private void initView() {
+        initTitle();
+        //初始化dialog
+        loadingDialog = new ProgressDialog(this);
+        loadingDialog.setCanceledOnTouchOutside(false);
+        loadingDialog.setMessage(getString(R.string.loading_device_list));
+        //初始化list
         rvEyeList.setLayoutManager(new LinearLayoutManager(this));
-        mEyeListAdapter = new EyeListAdapter(this,snackbarContainer);
-        rvEyeList.setAdapter(mEyeListAdapter);
+        mDeviceListAdapter = new DeviceListAdapter(this,snackbarContainer);
+        rvEyeList.setAdapter(mDeviceListAdapter);
+    }
+
+    private void initTitle() {
+        tvTitle.setText(R.string.device_list);
+        tvRefresh.setVisibility(View.VISIBLE);
+        tvRefresh.setText(R.string.refresh);
     }
 
     /**登录后的初始化操作*/
@@ -109,6 +121,19 @@ public class MainActivity extends BaseActivity implements EMEventListener {
         });
         //监听添加好友请求
         ContactUtil.initContactListener(this);
+        //请求设备列表
+        requestDeviceList(false);
+    }
+
+    /**请求设备列表（好友列表）*/
+    private void requestDeviceList(final boolean needFeedBack) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                loadingDialog.show();
+                tvRefresh.setClickable(false);
+            }
+        });
         //获取用户列表并展示
         new Thread(new Runnable() {
             @Override
@@ -123,11 +148,16 @@ public class MainActivity extends BaseActivity implements EMEventListener {
                         public void run() {
                             if(usernames!=null&&!usernames.isEmpty()) {
                                 tvEmptyLog.setVisibility(View.GONE);
-                                mEyeListAdapter.setEyeList(usernames);
+                                mDeviceListAdapter.setEyeList(usernames);
                                 loadingDialog.dismiss();
                             }else {
                                 tvEmptyLog.setText(R.string.none_device);
                                 loadingDialog.dismiss();
+                            }
+                            tvRefresh.setClickable(true);
+                            //反馈提示
+                            if(needFeedBack){
+                                Snackbar.make(snackbarContainer,R.string.refresh_success,Snackbar.LENGTH_SHORT).show();
                             }
 
                         }
@@ -146,7 +176,7 @@ public class MainActivity extends BaseActivity implements EMEventListener {
 
     @Override
     public void onEvent(EMNotifierEvent emNotifierEvent) {
-        LogUtil.e("xmh-event", "event:"+emNotifierEvent.getEvent());
+        LogUtil.e("xmh-event", "event:" + emNotifierEvent.getEvent());
     }
 
     @Override
@@ -155,6 +185,11 @@ public class MainActivity extends BaseActivity implements EMEventListener {
         if(receiver!=null) {
             LocalBroadcastManager.getInstance(this).unregisterReceiver(receiver);
         }
+    }
+
+    @OnClick(R.id.tv_menu)
+    void onRefreshClick(){
+        requestDeviceList(true);
     }
 
     /**好友列表改变监听*/
@@ -167,7 +202,7 @@ public class MainActivity extends BaseActivity implements EMEventListener {
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    mEyeListAdapter.setEyeList(contacts);
+                    mDeviceListAdapter.setEyeList(contacts);
                 }
             });
         }

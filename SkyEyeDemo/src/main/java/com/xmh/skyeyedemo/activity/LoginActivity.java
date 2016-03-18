@@ -33,6 +33,7 @@ public class LoginActivity extends BaseActivity {
         ButterKnife.bind(this);
     }
 
+
     @OnClick({R.id.btn_head_login,R.id.btn_eye_login})
     void onLoginClick(final View view){
         CommonUtil.closeInputMethod(this);
@@ -70,7 +71,7 @@ public class LoginActivity extends BaseActivity {
                     public void run() {
                         pd.dismiss();
                         if(view.getId()==R.id.btn_head_login){
-                            startActivity(new Intent(LoginActivity.this, MainActivity.class));
+                            startActivity(new Intent(LoginActivity.this, DeviceListActivity.class));
                         }else if(view.getId()==R.id.btn_eye_login) {
                             startActivity(new Intent(LoginActivity.this, WatchActivity.class));
                         }
@@ -102,8 +103,6 @@ public class LoginActivity extends BaseActivity {
             }
         });
     }
-
-
 
     @Override
     public void onBackPressed() {
