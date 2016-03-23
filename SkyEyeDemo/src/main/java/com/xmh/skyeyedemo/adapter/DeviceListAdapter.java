@@ -66,7 +66,7 @@ public class DeviceListAdapter extends RecyclerView.Adapter<DeviceListAdapter.Ey
 
     @Override
     public EyeViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view= LayoutInflater.from(mContext).inflate(R.layout.layout_eye_item, parent, false);
+        View view= LayoutInflater.from(mContext).inflate(R.layout.layout_device_item, parent, false);
         return new EyeViewHolder(view);
     }
 
