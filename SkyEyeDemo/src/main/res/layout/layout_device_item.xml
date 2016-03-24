@@ -2,63 +2,77 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
+    android:layout_margin="2dp"
     >
 
-    <Button
-        android:id="@+id/btn_eye_name"
+    <com.xmh.skyeyedemo.view.SwipeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/loading_device_name"
-        />
-
-    <RelativeLayout
-        android:id="@+id/rl_edit"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
+        android:gravity="center_vertical"
         >
-        <EditText
-            android:id="@+id/et_name"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_toLeftOf="@+id/btn_sure"/>
-        <Button
-            android:id="@+id/btn_sure"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:text="@string/sure"
-            />
-    </RelativeLayout>
 
-    <LinearLayout
-        android:id="@+id/ll_control"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/btn_eye_name"
-        android:orientation="horizontal">
-        <Button
-            android:id="@+id/btn_change_name"
-            android:layout_weight="1"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:text="@string/change_name"
-            />
-        <Button
-            android:id="@+id/btn_real_time"
-            android:layout_weight="1"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:text="@string/real_time"
-            />
-        <Button
-            android:id="@+id/btn_history"
-            android:layout_weight="1"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:text="@string/history_record"
-            />
-    </LinearLayout>
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_gravity="center"
+            >
+
+            <TextView
+                android:id="@+id/tv_device_name"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:background="@android:color/darker_gray"
+                android:text="@string/loading_device_name"
+                />
+            <RelativeLayout
+                android:id="@+id/rl_edit"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                >
+                <EditText
+                    android:id="@+id/et_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_toLeftOf="@+id/btn_sure"/>
+                <Button
+                    android:id="@+id/btn_sure"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:text="@string/sure"
+                    />
+            </RelativeLayout>
+        </RelativeLayout>
+        <LinearLayout
+            android:id="@+id/ll_control"
+            android:layout_width="120dp"
+            android:layout_height="60dp"
+            android:orientation="horizontal">
+            <Button
+                android:id="@+id/btn_change_name"
+                android:layout_weight="1"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="@string/change_name"
+                />
+            <Button
+                android:id="@+id/btn_real_time"
+                android:layout_weight="1"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="@string/real_time"
+                />
+            <Button
+                android:id="@+id/btn_history"
+                android:layout_weight="1"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="@string/history_record"
+                />
+        </LinearLayout>
+
+    </com.xmh.skyeyedemo.view.SwipeLayout>
 
 </RelativeLayout>

@@ -9,9 +9,9 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.webkit.MimeTypeMap;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.bmob.BmobProFile;
 import com.bmob.btp.callback.DownloadListener;
@@ -58,17 +58,16 @@ public class VideoListAdapter extends RecyclerView.Adapter<VideoListAdapter.Vide
         holder.bean=mFileList.get(position);
         String str = holder.bean.getVideoFile().getFilename();
         str= FileUtil.parseDateFromFilename(str);
-        holder.btnVideo.setText(str);
-        holder.llControl.setVisibility(View.GONE);
+        holder.tvVideo.setText(str);
+        holder.llControl.setVisibility(View.VISIBLE);
         //region set listener
-        holder.btnVideo.setOnClickListener(new View.OnClickListener() {
+        holder.tvVideo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(holder.llControl.getVisibility()==View.VISIBLE){
-                    holder.llControl.setVisibility(View.GONE);
-                }else {
-                    holder.llControl.setVisibility(View.VISIBLE);
-                }
+                //播放
+                Intent intent = new Intent(mContext, VideoPlayActivity.class);
+                intent.putExtra(VideoPlayActivity.EXTRA_TAG_VIDEO_URL,holder.bean);
+                mContext.startActivity(intent);
             }
         });
         holder.btnPlay.setOnClickListener(new View.OnClickListener() {
@@ -78,7 +77,6 @@ public class VideoListAdapter extends RecyclerView.Adapter<VideoListAdapter.Vide
                 Intent intent = new Intent(mContext, VideoPlayActivity.class);
                 intent.putExtra(VideoPlayActivity.EXTRA_TAG_VIDEO_URL,holder.bean);
                 mContext.startActivity(intent);
-                holder.llControl.setVisibility(View.GONE);
             }
         });
         holder.btnDelete.setOnClickListener(new View.OnClickListener() {
@@ -115,7 +113,6 @@ public class VideoListAdapter extends RecyclerView.Adapter<VideoListAdapter.Vide
                                             public void onClick(View v) {
                                                 Intent intent = new Intent();
                                                 intent.setAction(Intent.ACTION_VIEW);
-                                                String mimeType = MimeTypeMap.getFileExtensionFromUrl(dstPath);
                                                 Uri uri = Uri.fromFile(new File(dstPath));
                                                 intent.setDataAndType(uri, "video/mp4");
                                                 mContext.startActivity(intent);
@@ -152,7 +149,7 @@ public class VideoListAdapter extends RecyclerView.Adapter<VideoListAdapter.Vide
 
         public FileBmobBean bean;
 
-        public Button btnVideo;
+        public TextView tvVideo;
 
         public LinearLayout llControl;
         public Button btnPlay;
@@ -161,7 +158,7 @@ public class VideoListAdapter extends RecyclerView.Adapter<VideoListAdapter.Vide
 
         public VideoViewHolder(View itemView) {
             super(itemView);
-            btnVideo= (Button) itemView.findViewById(R.id.btn_video);
+            tvVideo= (TextView) itemView.findViewById(R.id.tv_video);
 
             llControl= (LinearLayout) itemView.findViewById(R.id.ll_control);
             btnPlay= (Button) itemView.findViewById(R.id.btn_play);

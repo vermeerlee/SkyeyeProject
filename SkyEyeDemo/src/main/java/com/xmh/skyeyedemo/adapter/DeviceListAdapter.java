@@ -11,6 +11,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.easemob.chat.EMChatManager;
 import com.xmh.skyeyedemo.R;
@@ -77,24 +78,28 @@ public class DeviceListAdapter extends RecyclerView.Adapter<DeviceListAdapter.Ey
         UserBmobBean userBmobBean = mEyeUserMap.get(username);
         if(userBmobBean!=null){
             holder.bean=userBmobBean;
-            holder.btnEyeName.setText(userBmobBean.getNickName());
+            holder.tvDeviceName.setText(userBmobBean.getNickName());
         }
         holder.rlEdit.setVisibility(View.GONE);
-        holder.llControl.setVisibility(View.GONE);
+        holder.llControl.setVisibility(View.VISIBLE);
         //endregion
         //region init click
-        holder.btnEyeName.setOnClickListener(new View.OnClickListener() {
+        holder.tvDeviceName.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(holder.bean==null){
+                if (holder.bean == null) {
                     //数据未请求下来，不理会点击事件
                     return;
                 }
-                if(holder.llControl.getVisibility()==View.GONE) {
-                    holder.llControl.setVisibility(View.VISIBLE);
-                }else {
-                    holder.llControl.setVisibility(View.GONE);
+                //点击开启视频请求
+                if (!EMChatManager.getInstance().isConnected())
+                    Snackbar.make(mSnackbarContainer, R.string.network_isnot_available, Snackbar.LENGTH_SHORT).show();
+                else{
+                    Intent intent = new Intent(mContext, CallActivity.class);
+                    intent.putExtra(CallActivity.EXTRA_TAG_EYE_BEAN, mEyeUserMap.get(username));
+                    mContext.startActivity(intent);
                 }
+                holder.rlEdit.setVisibility(View.GONE);
             }
         });
         holder.btnChangeName.setOnClickListener(new View.OnClickListener() {
@@ -104,8 +109,10 @@ public class DeviceListAdapter extends RecyclerView.Adapter<DeviceListAdapter.Ey
                     holder.etName.setText(holder.bean.getNickName());
                     holder.etName.requestFocus();
                     holder.rlEdit.setVisibility(View.VISIBLE);
+                    holder.tvDeviceName.setVisibility(View.GONE);
                 }else {
                     holder.rlEdit.setVisibility(View.GONE);
+                    holder.tvDeviceName.setVisibility(View.VISIBLE);
                 }
             }
         });
@@ -116,16 +123,16 @@ public class DeviceListAdapter extends RecyclerView.Adapter<DeviceListAdapter.Ey
                 if(newName.equals(holder.bean.getNickName())){
                     //未作修改则不作处理
                     holder.rlEdit.setVisibility(View.GONE);
-                    holder.llControl.setVisibility(View.GONE);
+                    holder.tvDeviceName.setVisibility(View.VISIBLE);
                     return;
                 }
                 //保存数据到服务器
                 holder.bean.setNickName(newName);
                 holder.bean.update(mContext);
                 //更新UI
-                holder.btnEyeName.setText(newName);
+                holder.tvDeviceName.setText(newName);
                 holder.rlEdit.setVisibility(View.GONE);
-                holder.llControl.setVisibility(View.GONE);
+                holder.tvDeviceName.setVisibility(View.VISIBLE);
             }
         });
         holder.btnRealTime.setOnClickListener(new View.OnClickListener() {
@@ -140,7 +147,6 @@ public class DeviceListAdapter extends RecyclerView.Adapter<DeviceListAdapter.Ey
                     mContext.startActivity(intent);
                 }
                 holder.rlEdit.setVisibility(View.GONE);
-                holder.llControl.setVisibility(View.GONE);
             }
         });
         holder.btnHistoryRecord.setOnClickListener(new View.OnClickListener() {
@@ -148,10 +154,9 @@ public class DeviceListAdapter extends RecyclerView.Adapter<DeviceListAdapter.Ey
             public void onClick(View v) {
                 //进入历史记录界面
                 Intent intent = new Intent(mContext, VideoListActivity.class);
-                intent.putExtra(VideoListActivity.EXTRA_TAG_EYENAME,username);
+                intent.putExtra(VideoListActivity.EXTRA_TAG_EYENAME, username);
                 mContext.startActivity(intent);
                 holder.rlEdit.setVisibility(View.GONE);
-                holder.llControl.setVisibility(View.GONE);
             }
         });
         //endregion
@@ -166,7 +171,7 @@ public class DeviceListAdapter extends RecyclerView.Adapter<DeviceListAdapter.Ey
 
         public UserBmobBean bean;
 
-        public Button btnEyeName;
+        public TextView tvDeviceName;
 
         public Button btnChangeName;
         public Button btnRealTime;
@@ -179,7 +184,7 @@ public class DeviceListAdapter extends RecyclerView.Adapter<DeviceListAdapter.Ey
 
         public EyeViewHolder(View itemView) {
             super(itemView);
-            btnEyeName= (Button) itemView.findViewById(R.id.btn_eye_name);
+            tvDeviceName = (TextView) itemView.findViewById(R.id.tv_device_name);
 
             btnChangeName= (Button) itemView.findViewById(R.id.btn_change_name);
             btnRealTime= (Button) itemView.findViewById(R.id.btn_real_time);

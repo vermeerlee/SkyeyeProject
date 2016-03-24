@@ -2,40 +2,47 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
+    android:layout_margin="2dp"
     >
 
-    <Button
-        android:id="@+id/btn_video"
+    <com.xmh.skyeyedemo.view.SwipeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        />
+        android:gravity="center_vertical"
+        >
+        <TextView
+            android:id="@+id/tv_video"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:gravity="center"
+            android:background="@android:color/darker_gray"
+            />
 
-    <LinearLayout
-        android:id="@+id/ll_control"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/btn_video"
-        android:orientation="horizontal"
-        android:visibility="gone">
-        <Button
-            android:id="@+id/btn_play"
-            android:layout_weight="1"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:text="@string/play"/>
-        <Button
-            android:id="@+id/btn_download"
-            android:layout_weight="1"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:text="@string/download"/>
-        <Button
-            android:id="@+id/btn_delete"
-            android:layout_weight="1"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:text="@string/delete"/>
-    </LinearLayout>
+        <LinearLayout
+            android:id="@+id/ll_control"
+            android:layout_width="120dp"
+            android:layout_height="60dp"
+            android:orientation="horizontal"
+            >
+            <Button
+                android:id="@+id/btn_play"
+                android:layout_weight="1"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="@string/play"/>
+            <Button
+                android:id="@+id/btn_download"
+                android:layout_weight="1"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="@string/download"/>
+            <Button
+                android:id="@+id/btn_delete"
+                android:layout_weight="1"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="@string/delete"/>
+        </LinearLayout>
+    </com.xmh.skyeyedemo.view.SwipeLayout>
 
 </RelativeLayout>
