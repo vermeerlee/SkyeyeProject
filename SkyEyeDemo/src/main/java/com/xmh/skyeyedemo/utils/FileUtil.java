@@ -11,7 +11,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 /**
  * Created by mengh on 2016/3/2 002.
@@ -214,4 +216,26 @@ public class FileUtil {
             return true;
         }
     }
+
+    /**扫描未上传文件*/
+    public static String[] scanFilePath() {
+        LogUtil.e("xmh-file","scan");
+        List<String> pathList=new ArrayList<>();
+        File sdFolder = new File(getVideoFilePathOnSD());
+        File[] list1 = sdFolder.listFiles(new VideoFileFilter());
+        if(list1!=null&&list1.length>0) {
+            for (File file : list1) {
+                pathList.add(file.getAbsolutePath());
+            }
+        }
+        File phoneFolder = new File(getVideoFilePathOnPhone());
+        File[] list2 = phoneFolder.listFiles(new VideoFileFilter());
+        if(list2!=null&&list2.length>0) {
+            for (File file : list2) {
+                pathList.add(file.getAbsolutePath());
+            }
+        }
+        return pathList.toArray(new String[pathList.size()]);
+    }
+
 }

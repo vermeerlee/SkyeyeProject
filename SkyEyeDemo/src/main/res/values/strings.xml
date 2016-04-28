@@ -33,7 +33,8 @@
     <string name="loading_device_list">正在加载设备列表</string>
     <string name="decoding">正在解码</string>
     <string name="load_fail">加载失败</string>
-    <string name="retry">点击重试</string>
+    <string name="click_to_retry">点击重试</string>
+    <string name="retry">重试</string>
     <string name="loading_device_name">正在加载设备名称...</string>
     <string name="none_device">无可用设备</string>
     <string name="loading_video_list">正在加载录像列表</string>
@@ -41,6 +42,7 @@
     <string name="play">播放</string>
     <string name="delete">删除</string>
     <string name="download">下载</string>
+    <string name="download_failed">下载失败</string>
     <string name="downloading">正在下载</string>
     <string name="download_path">下载到文件夹</string>
     <string name="open">打开</string>

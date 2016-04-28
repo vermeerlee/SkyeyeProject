@@ -405,7 +405,7 @@ public class CameraHelper implements Camera.PreviewCallback {
             mCamera.lock();
             LogUtil.e("xmh-record", "stop record", true);
             //上传文件
-            UploadUtil.uploadVideoFile(mContext, currentVideoFileName);
+            UploadUtil.uploadFile(mContext, currentVideoFileName);
             UploadUtil.checkAndUploadVideoFile(mContext);
         }
     }

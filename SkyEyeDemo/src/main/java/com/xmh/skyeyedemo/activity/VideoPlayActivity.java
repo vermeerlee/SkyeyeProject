@@ -23,15 +23,17 @@ import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.view.View;
 
-import com.bmob.BmobProFile;
-import com.bmob.btp.callback.DownloadListener;
 import com.xmh.skyeyedemo.R;
 import com.xmh.skyeyedemo.base.BaseActivity;
 import com.xmh.skyeyedemo.bean.FileBmobBean;
+import com.xmh.skyeyedemo.utils.FileUtil;
+
+import java.io.File;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import cn.bmob.v3.listener.DownloadFileListener;
 import io.vov.vitamio.MediaPlayer;
 import io.vov.vitamio.Vitamio;
 import io.vov.vitamio.widget.MediaController;
@@ -70,7 +72,15 @@ public class VideoPlayActivity extends BaseActivity {
         progressDialog.setMessage(getString(R.string.loading));
         progressDialog.show();
         //下载文件
-        BmobProFile.getInstance(this).download(fileBmobBean.getFilenameForDownload(), new DownloadListener() {
+        final String dstPath= FileUtil.getDownloadPath()+fileBmobBean.getVideoFile().getFilename();
+        fileBmobBean.getVideoFile().download(VideoPlayActivity.this, new File(dstPath), new DownloadFileListener() {
+
+            @Override
+            public void onProgress(Integer progress, long total) {
+                super.onProgress(progress, total);
+                progressDialog.setMessage(VideoPlayActivity.this.getResources().getString(R.string.decoding));
+            }
+
             @Override
             public void onSuccess(final String path) {
                 runOnUiThread(new Runnable() {
@@ -83,29 +93,18 @@ public class VideoPlayActivity extends BaseActivity {
             }
 
             @Override
-            public void onProgress(String path, final int percent) {
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        progressDialog.setProgress(percent);
-                        progressDialog.setMessage(VideoPlayActivity.this.getResources().getString(R.string.decoding));
-                    }
-                });
-            }
-
-            @Override
-            public void onError(int statuscode, String errormsg) {
+            public void onFailure(int i, String s) {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         progressDialog.dismiss();
-                        //弹出提示“点击重试”，snackbar滑动消失
+                        //弹出提示“重试”，snackbar滑动消失
                         Snackbar.make(snackbarContainer,R.string.load_fail,Snackbar.LENGTH_INDEFINITE).setAction(R.string.retry, new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
                                 requestData();
                             }
-                        });
+                        }).show();
                     }
                 });
             }

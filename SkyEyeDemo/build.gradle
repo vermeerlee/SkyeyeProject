@@ -32,7 +32,7 @@ dependencies {
     compile 'com.jakewharton:butterknife:7.0.1'
     compile 'com.android.support:design:23.1.1'
     //bmob-sdk ：Bmob的android sdk包
-    compile 'cn.bmob.android:bmob-sdk:3.4.5'
+    compile 'cn.bmob.android:bmob-sdk:3.4.6'
     //bmob-push：Bmob的推送包
     compile 'cn.bmob.android:bmob-push:0.6'
     //okhttp（选填）：为解决弱网情况下SDK请求失败及响应慢的问题，自`V3.4.3版本`开始使用`okhttp`优化SDK的网络框架。

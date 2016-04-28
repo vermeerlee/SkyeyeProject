@@ -1,9 +1,11 @@
 package com.xmh.skyeyedemo.adapter;
 
+import android.annotation.TargetApi;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Build;
 import android.support.design.widget.Snackbar;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -13,8 +15,6 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.bmob.BmobProFile;
-import com.bmob.btp.callback.DownloadListener;
 import com.xmh.skyeyedemo.R;
 import com.xmh.skyeyedemo.activity.VideoPlayActivity;
 import com.xmh.skyeyedemo.bean.FileBmobBean;
@@ -24,6 +24,8 @@ import com.xmh.skyeyedemo.utils.LogUtil;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+
+import cn.bmob.v3.listener.DownloadFileListener;
 
 /**
  * Created by mengh on 2016/3/9 009.
@@ -82,7 +84,7 @@ public class VideoListAdapter extends RecyclerView.Adapter<VideoListAdapter.Vide
         holder.btnDelete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                BmobProFile.getInstance(mContext).deleteFile(holder.bean.getFilenameForDownload(), null);
+                holder.bean.getVideoFile().delete(mContext);
                 mFileList.remove(holder.bean);
                 notifyDataSetChanged();
             }
@@ -94,45 +96,40 @@ public class VideoListAdapter extends RecyclerView.Adapter<VideoListAdapter.Vide
                 progressDialog.setCanceledOnTouchOutside(false);
                 progressDialog.setMessage(mContext.getString(R.string.downloading));
                 progressDialog.show();
-                BmobProFile.getInstance(mContext).download(holder.bean.getFilenameForDownload(), new DownloadListener() {
+                final String dstPath=FileUtil.getDownloadPath()+holder.bean.getVideoFile().getFilename();
+                holder.bean.getVideoFile().download(mContext, new File(dstPath), new DownloadFileListener() {
                     @Override
-                    public void onSuccess(final String path) {
-                        new Thread(new Runnable() {
+                    public void onSuccess(String path) {
+                        holder.btnDownload.post(new Runnable() {
                             @Override
                             public void run() {
-                                final String dstPath=FileUtil.getDownloadPath()+holder.bean.getVideoFile().getFilename();
-                                FileUtil.copyFile(path,dstPath);
-                                holder.btnDownload.post(new Runnable() {
+                                LogUtil.e("xmh-download", dstPath);
+                                progressDialog.dismiss();
+                                //snackbar滑动消失
+                                Snackbar.make(mSnackbarContainer,mContext.getString(R.string.download_path)+dstPath,Snackbar.LENGTH_INDEFINITE).setAction(R.string.open, new View.OnClickListener() {
                                     @Override
-                                    public void run() {
-                                        LogUtil.e("xmh-download", dstPath);
-                                        progressDialog.dismiss();
-                                        //snackbar滑动消失
-                                        Snackbar.make(mSnackbarContainer,mContext.getString(R.string.download_path)+dstPath,Snackbar.LENGTH_INDEFINITE).setAction(R.string.open, new View.OnClickListener() {
-                                            @Override
-                                            public void onClick(View v) {
-                                                Intent intent = new Intent();
-                                                intent.setAction(Intent.ACTION_VIEW);
-                                                Uri uri = Uri.fromFile(new File(dstPath));
-                                                intent.setDataAndType(uri, "video/mp4");
-                                                mContext.startActivity(intent);
-                                            }
-                                        }).show();
+                                    public void onClick(View v) {
+                                        Intent intent = new Intent();
+                                        intent.setAction(Intent.ACTION_VIEW);
+                                        Uri uri = Uri.fromFile(new File(dstPath));
+                                        intent.setDataAndType(uri, "video/mp4");
+                                        mContext.startActivity(intent);
                                     }
-                                });
+                                }).show();
                             }
-                        }).start();
-
+                        });
                     }
 
                     @Override
-                    public void onProgress(String path, int persent) {
-                        progressDialog.setProgress(persent);
-                    }
-
-                    @Override
-                    public void onError(int code, String msg) {
+                    public void onFailure(int i, String s) {
                         progressDialog.dismiss();
+                        Snackbar.make(mSnackbarContainer,mContext.getString(R.string.download_failed)+dstPath,Snackbar.LENGTH_INDEFINITE).setAction(R.string.retry, new View.OnClickListener() {
+                            @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH_MR1)
+                            @Override
+                            public void onClick(View v) {
+                                holder.btnDownload.callOnClick();
+                            }
+                        }).show();
                     }
                 });
             }
