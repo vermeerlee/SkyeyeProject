@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.support.design.widget.Snackbar;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -120,7 +121,7 @@ public class DeviceListAdapter extends RecyclerView.Adapter<DeviceListAdapter.Ey
             @Override
             public void onClick(View v) {
                 String newName=holder.etName.getText().toString().trim();
-                if(newName.equals(holder.bean.getNickName())){
+                if(TextUtils.isEmpty(newName)||newName.equals(holder.bean.getNickName())){
                     //未作修改则不作处理
                     holder.rlEdit.setVisibility(View.GONE);
                     holder.tvDeviceName.setVisibility(View.VISIBLE);
