@@ -65,7 +65,7 @@ public class LoginUtil {
                         public void run() {
                             try {
                                 EMChatManager.getInstance().createAccountOnServer(username, AppConfig.getPassword());//异步调用
-                                relogin(username, null);
+                                relogin(username, callBack);
                                 //region 保存用户信息到Bmob
                                 UserBmobBean userBmobBean = new UserBmobBean();
                                 userBmobBean.setFullUsername(username);
